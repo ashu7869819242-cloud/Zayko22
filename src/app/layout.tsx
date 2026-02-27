@@ -20,6 +20,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        <Script
+          src="https://checkout.razorpay.com/v1/checkout.js"
+          strategy="afterInteractive"
+        />
+      </head>
       <body className="min-h-screen flex flex-col">
         <AuthProvider>
           <CartProvider>
@@ -40,10 +46,6 @@ export default function RootLayout({
             />
           </CartProvider>
         </AuthProvider>
-        <Script
-          src="https://checkout.razorpay.com/v1/checkout.js"
-          strategy="beforeInteractive"
-        />
       </body>
     </html>
   );

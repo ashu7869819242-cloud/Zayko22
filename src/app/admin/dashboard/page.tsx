@@ -91,6 +91,7 @@ export default function AdminDashboard() {
     const adminLinks = [
         { href: "/admin/orders", label: "Manage Orders", icon: "📋", color: "from-blue-500 to-blue-600" },
         { href: "/admin/menu", label: "Manage Menu", icon: "🍽️", color: "from-teal-500 to-teal-600" },
+        { href: "/admin/auto-orders-forecast", label: "Forecast", icon: "📊", color: "from-amber-500 to-amber-600" },
         { href: "/admin/settings", label: "Settings", icon: "⚙️", color: "from-purple-500 to-purple-600" },
     ];
 

@@ -118,8 +118,9 @@ export default function WalletPage() {
                                 Authorization: `Bearer ${token}`,
                             },
                             body: JSON.stringify({
-                                ...response,
-                                amount: orderData.amount,
+                                razorpay_order_id: response.razorpay_order_id,
+                                razorpay_payment_id: response.razorpay_payment_id,
+                                razorpay_signature: response.razorpay_signature,
                             }),
                         });
 
@@ -149,6 +150,9 @@ export default function WalletPage() {
                 },
             };
 
+            if (!(window as any).Razorpay) {
+                throw new Error("Razorpay SDK not loaded. Please refresh the page and try again.");
+            }
             const rzp = new (window as any).Razorpay(options);
             rzp.open();
         } catch (err: any) {
