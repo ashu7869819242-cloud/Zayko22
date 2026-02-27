@@ -7,6 +7,7 @@ import { collection, doc, onSnapshot, query, orderBy } from "firebase/firestore"
 import MenuCard from "@/components/MenuCard";
 import { useCart } from "@/context/CartContext";
 import Link from "next/link";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface MenuItem {
   id: string;
@@ -112,8 +113,8 @@ export default function MenuPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="w-12 h-12 border-4 border-zayko-500 border-t-transparent rounded-full animate-spin"></div>
+      <div className="min-h-screen flex items-center justify-center bg-zayko-900">
+        <div className="w-12 h-12 border-4 border-gold-400 border-t-transparent rounded-full animate-spin"></div>
       </div>
     );
   }
@@ -121,60 +122,119 @@ export default function MenuPage() {
   if (!user) return null;
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Canteen Closed Banner */}
-      {!isCanteenOpen && (
-        <div className="bg-red-500 text-white text-center py-3 px-4 font-bold text-sm animate-fade-in">
-          🔴 The canteen is currently closed. Orders are not being accepted right now.
-        </div>
-      )}
+    <div className="min-h-screen bg-zayko-900 pb-24">
+      {/* ─── Canteen Closed Banner ─── */}
+      <AnimatePresence>
+        {!isCanteenOpen && (
+          <motion.div
+            initial={{ y: -40, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: -40, opacity: 0 }}
+            className="bg-red-500/90 text-white text-center py-3 px-4 font-bold text-sm backdrop-blur-md"
+          >
+            🔴 The canteen is currently closed. Orders are not being accepted right now.
+          </motion.div>
+        )}
+      </AnimatePresence>
 
-      {/* Closing Soon Warning */}
-      {isCanteenOpen && minutesUntilClose !== null && minutesUntilClose <= 30 && minutesUntilClose > 0 && (
-        <div className="bg-amber-500 text-white text-center py-2 px-4 font-semibold text-sm">
-          ⚠️ Canteen closing in {minutesUntilClose} minutes — some items may be unavailable
-        </div>
-      )}
+      {/* ─── Closing Soon Warning ─── */}
+      <AnimatePresence>
+        {isCanteenOpen && minutesUntilClose !== null && minutesUntilClose <= 30 && minutesUntilClose > 0 && (
+          <motion.div
+            initial={{ y: -40, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: -40, opacity: 0 }}
+            className="bg-gradient-to-r from-amber-500/90 to-orange-500/90 text-white text-center py-2.5 px-4 font-semibold text-sm backdrop-blur-md"
+          >
+            ⚠️ Canteen closing in {minutesUntilClose} minutes — some items may be unavailable
+          </motion.div>
+        )}
+      </AnimatePresence>
 
-      {/* Hero Section */}
-      <div className="gradient-primary text-white">
-        <div className="page-container py-8 sm:py-12">
+      {/* ─── Sticky Frosted Glass Navbar ─── */}
+      <nav className="sticky top-0 z-50 glass-navbar">
+        <div className="page-container !py-3 flex items-center justify-between">
+          <Link href="/" className="flex items-center gap-2 group">
+            <span className="text-xl">⚡</span>
+            <span className="font-display font-bold text-lg text-white tracking-tight group-hover:text-gold-400 transition-colors">
+              Zayko
+            </span>
+          </Link>
+
+          <div className="flex items-center gap-2 sm:gap-3">
+            <Link
+              href="/orders"
+              className="px-3 py-2 text-sm text-zayko-300 hover:text-white hover:bg-white/5 rounded-xl transition-all"
+            >
+              📋 Orders
+            </Link>
+            <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-white/5 border border-white/10">
+              <span className="text-zayko-400 text-sm">Wallet:</span>
+              <span className="font-bold text-gold-400 text-sm">₹{profile?.walletBalance || 0}</span>
+            </div>
+          </div>
+        </div>
+      </nav>
+
+      {/* ─── Hero Section (Radial Gradient) ─── */}
+      <div className="gradient-primary relative overflow-hidden">
+        {/* Decorative glow orbs */}
+        <div className="absolute -top-20 -left-20 w-72 h-72 bg-gold-400/5 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute -bottom-10 right-10 w-60 h-60 bg-teal-400/5 rounded-full blur-3xl pointer-events-none" />
+
+        <div className="page-container py-10 sm:py-14 relative z-10">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-            <div className="animate-fade-in">
-              <h1 className="text-3xl sm:text-4xl font-display font-bold">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+            >
+              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-display font-bold text-white tracking-tight">
                 Hey {profile?.name?.split(" ")[0] || "there"}! 👋
               </h1>
-              <p className="text-zayko-200 mt-1">What are you craving today?</p>
-            </div>
-            <div className="flex items-center gap-3">
-              <div className="bg-white/10 backdrop-blur-xl rounded-2xl px-4 py-3 text-sm">
-                <span className="text-zayko-200">Wallet:</span>{" "}
-                <span className="font-bold text-gold-300">₹{profile?.walletBalance || 0}</span>
-              </div>
-              <div className="bg-white/10 backdrop-blur-xl rounded-2xl px-4 py-3 text-sm">
+              <p className="text-zayko-300 mt-2 text-lg">What are you craving today?</p>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.4, delay: 0.15 }}
+              className="flex items-center gap-3"
+            >
+              <div className="flex items-center gap-2 px-4 py-3 rounded-2xl bg-emerald-400/10 border border-emerald-400/20 text-sm text-emerald-400 font-medium">
                 🟢 {availableCount} items available
               </div>
-            </div>
+            </motion.div>
           </div>
 
           {/* Search Bar */}
-          <div className="mt-6 relative">
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, delay: 0.2 }}
+            className="mt-8 relative"
+          >
             <input
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="🔍 Search for dishes..."
-              className="w-full px-5 py-4 rounded-2xl bg-white/10 backdrop-blur-xl border border-white/20 text-white placeholder:text-zayko-300 focus:outline-none focus:ring-2 focus:ring-gold-400 text-lg"
+              className="search-glow w-full px-6 py-4 rounded-2xl bg-white/5 border border-white/10 text-white placeholder:text-zayko-400 focus:outline-none text-lg font-medium transition-all duration-300"
             />
-          </div>
+          </motion.div>
 
-          {/* Category Filters */}
-          <div className="mt-4 flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
+          {/* Category Filter Pills */}
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, delay: 0.3 }}
+            className="mt-5 flex gap-2 overflow-x-auto pb-2 scrollbar-hide"
+          >
             <button
               onClick={() => setCategory("all")}
-              className={`px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap capitalize transition-all ${category === "all"
-                ? "bg-gold-400 text-zayko-900 shadow-gold-glow"
-                : "bg-white/10 text-white hover:bg-white/20"
+              className={`px-5 py-2.5 rounded-xl text-sm font-semibold whitespace-nowrap capitalize transition-all duration-200 ${category === "all"
+                ? "bg-gradient-to-r from-gold-400 to-gold-500 text-zayko-900 shadow-[0_0_20px_rgba(251,191,36,0.25)]"
+                : "bg-white/5 text-zayko-300 hover:bg-white/10 border border-white/5 hover:border-white/10"
                 }`}
             >
               🍽️ All
@@ -183,64 +243,83 @@ export default function MenuPage() {
               <button
                 key={cat.id}
                 onClick={() => setCategory(cat.slug)}
-                className={`px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap capitalize transition-all ${category === cat.slug
-                  ? "bg-gold-400 text-zayko-900 shadow-gold-glow"
-                  : "bg-white/10 text-white hover:bg-white/20"
+                className={`px-5 py-2.5 rounded-xl text-sm font-semibold whitespace-nowrap capitalize transition-all duration-200 ${category === cat.slug
+                  ? "bg-gradient-to-r from-gold-400 to-gold-500 text-zayko-900 shadow-[0_0_20px_rgba(251,191,36,0.25)]"
+                  : "bg-white/5 text-zayko-300 hover:bg-white/10 border border-white/5 hover:border-white/10"
                   }`}
               >
                 {cat.name}
               </button>
             ))}
-          </div>
+          </motion.div>
         </div>
       </div>
 
-      {/* Menu Grid */}
-      <div className="page-container -mt-2">
+      {/* ─── Menu Grid ─── */}
+      <div className="page-container">
         {menuLoading ? (
           <div className="flex items-center justify-center py-20">
             <div className="text-center">
-              <div className="w-12 h-12 border-4 border-zayko-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-              <p className="text-gray-500">Loading menu...</p>
+              <div className="w-12 h-12 border-4 border-gold-400 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+              <p className="text-zayko-400">Loading menu...</p>
             </div>
           </div>
         ) : filteredItems.length === 0 ? (
-          <div className="text-center py-20 animate-fade-in">
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="text-center py-20"
+          >
             <div className="text-6xl mb-4">🍽️</div>
-            <h3 className="text-xl font-display font-bold text-gray-700 mb-2">No items found</h3>
-            <p className="text-gray-500">
+            <h3 className="text-xl font-display font-bold text-white mb-2">No items found</h3>
+            <p className="text-zayko-400">
               {search ? `No results for "${search}"` : "The menu is empty right now"}
             </p>
-          </div>
+          </motion.div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 animate-fade-in">
-            {filteredItems.map((item) => (
-              <MenuCard key={item.id} {...item} />
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {filteredItems.map((item, idx) => (
+              <motion.div
+                key={item.id}
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, delay: idx * 0.05 }}
+              >
+                <MenuCard {...item} />
+              </motion.div>
             ))}
           </div>
         )}
       </div>
 
-      {/* Floating Cart Bar */}
-      {itemCount > 0 && (
-        <div className="fixed bottom-4 left-4 right-4 sm:left-auto sm:right-6 sm:w-auto z-40 animate-slide-up">
-          <Link
-            href="/cart"
-            className="flex items-center justify-between gap-4 bg-zayko-500 text-white px-6 py-4 rounded-2xl shadow-2xl hover:shadow-glow transition-all hover:scale-[1.02]"
+      {/* ─── Floating Cart Bar ─── */}
+      <AnimatePresence>
+        {itemCount > 0 && (
+          <motion.div
+            initial={{ y: 80, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: 80, opacity: 0 }}
+            transition={{ type: "spring", stiffness: 300, damping: 30 }}
+            className="fixed bottom-4 left-4 right-4 sm:left-auto sm:right-6 sm:w-auto z-40"
           >
-            <div className="flex items-center gap-3">
-              <span className="bg-white/20 w-10 h-10 rounded-xl flex items-center justify-center text-lg">
-                🛒
-              </span>
-              <div>
-                <p className="font-bold">{itemCount} item{itemCount > 1 ? "s" : ""}</p>
-                <p className="text-xs text-zayko-200">View your cart</p>
+            <Link
+              href="/cart"
+              className="flex items-center justify-between gap-6 bg-gradient-to-r from-gold-500 to-gold-400 text-zayko-900 px-6 py-4 rounded-2xl shadow-[0_10px_40px_rgba(251,191,36,0.3)] hover:shadow-[0_15px_50px_rgba(251,191,36,0.4)] transition-all hover:scale-[1.02] active:scale-95"
+            >
+              <div className="flex items-center gap-3">
+                <span className="bg-zayko-900/20 w-10 h-10 rounded-xl flex items-center justify-center text-lg">
+                  🛒
+                </span>
+                <div>
+                  <p className="font-bold">{itemCount} item{itemCount > 1 ? "s" : ""}</p>
+                  <p className="text-xs text-zayko-900/70">View your cart</p>
+                </div>
               </div>
-            </div>
-            <span className="font-display font-bold text-lg text-gold-300">₹{total}</span>
-          </Link>
-        </div>
-      )}
+              <span className="font-display font-bold text-lg">₹{total}</span>
+            </Link>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
