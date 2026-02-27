@@ -91,10 +91,16 @@ function OrderCountdown({ readyAt, status }: { readyAt?: string; status: string 
 
 /* ─── Main Orders Page ───────────────────────────────────── */
 export default function OrdersPage() {
-    const { user, loading } = useAuth();
+    const { user, loading, profile } = useAuth();
     const router = useRouter();
     const [orders, setOrders] = useState<Order[]>([]);
     const [ordersLoading, setOrdersLoading] = useState(true);
+
+    // Feedback Modal State
+    const [feedbackOrder, setFeedbackOrder] = useState<Order | null>(null);
+    const [rating, setRating] = useState(5);
+    const [comment, setComment] = useState("");
+    const [submitting, setSubmitting] = useState(false);
 
     useEffect(() => {
         if (!loading && !user) router.push("/auth");
@@ -122,11 +128,10 @@ export default function OrdersPage() {
             },
             (error) => {
                 console.error("Orders listener error:", error);
-                // Common cause: composite index not deployed
                 if (error.code === "failed-precondition") {
-                    toast.error("Firestore index required. Check console for the index creation link.");
+                    toast.error("Firestore index required.");
                 } else {
-                    toast.error("Failed to load orders. Please refresh.");
+                    toast.error("Failed to load orders.");
                 }
                 setOrdersLoading(false);
             }
@@ -135,7 +140,38 @@ export default function OrdersPage() {
         return () => unsubscribe();
     }, [user]);
 
-    // 🔔 Notification hook: fires toast + browser notification + sound on "ready"
+    const submitFeedback = async () => {
+        if (!feedbackOrder || !user) return;
+        setSubmitting(true);
+        try {
+            const res = await fetch("/api/feedbacks", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    orderId: feedbackOrder.id,
+                    userId: user.uid,
+                    userName: profile?.name || user.email || "User",
+                    rating,
+                    comment
+                })
+            });
+
+            if (res.ok) {
+                toast.success("Feedback submitted! Thanks! ❤️");
+                setFeedbackOrder(null);
+                setRating(5);
+                setComment("");
+            } else {
+                toast.error("Failed to submit feedback.");
+            }
+        } catch (err) {
+            toast.error("Error submitting feedback.");
+        } finally {
+            setSubmitting(false);
+        }
+    };
+
+    // 🔔 Notification hook
     useOrderNotifications(orders);
 
     if (loading || ordersLoading) {
@@ -146,7 +182,6 @@ export default function OrdersPage() {
         );
     }
 
-    // Separate active orders (need attention) from past orders
     const activeStatuses = ["pending", "confirmed", "preparing", "ready"];
     const activeOrders = orders.filter((o) => activeStatuses.includes(o.status));
     const pastOrders = orders.filter((o) => !activeStatuses.includes(o.status));
@@ -154,7 +189,7 @@ export default function OrdersPage() {
     return (
         <div className="min-h-screen bg-gray-50">
             <div className="page-container max-w-3xl">
-                <div className="mb-8 animate-fade-in">
+                <div className="mb-8 animate-fade-in pt-6">
                     <h1 className="section-title">My Orders 📋</h1>
                     <p className="text-gray-500 mt-1">{orders.length} order{orders.length !== 1 ? "s" : ""} placed</p>
                 </div>
@@ -162,19 +197,19 @@ export default function OrdersPage() {
                 {orders.length === 0 ? (
                     <div className="text-center py-20 animate-fade-in">
                         <div className="text-6xl mb-4">📋</div>
-                        <h3 className="text-xl font-display font-bold text-gray-700 mb-2">No orders yet</h3>
+                        <h1 className="text-xl font-display font-bold text-gray-700 mb-2">No orders yet</h1>
                         <p className="text-gray-500 mb-6">Your order history will appear here</p>
                         <button onClick={() => router.push("/")} className="btn-primary">
                             Browse Menu 🍽️
                         </button>
                     </div>
                 ) : (
-                    <div className="space-y-8">
+                    <div className="space-y-8 pb-20">
                         {/* Active Orders */}
                         {activeOrders.length > 0 && (
                             <div>
-                                <h2 className="text-lg font-display font-bold text-zayko-600 mb-4 flex items-center gap-2">
-                                    <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+                                <h2 className="text-sm font-bold text-emerald-600 uppercase tracking-widest mb-4 flex items-center gap-2">
+                                    <span className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span>
                                     Active Orders
                                 </h2>
                                 <div className="space-y-4">
@@ -188,12 +223,12 @@ export default function OrdersPage() {
                         {/* Past Orders */}
                         {pastOrders.length > 0 && (
                             <div>
-                                <h2 className="text-lg font-display font-bold text-gray-400 mb-4">
+                                <h2 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">
                                     Past Orders
                                 </h2>
                                 <div className="space-y-4">
                                     {pastOrders.map((order) => (
-                                        <OrderCard key={order.id} order={order} />
+                                        <OrderCard key={order.id} order={order} onReview={() => setFeedbackOrder(order)} />
                                     ))}
                                 </div>
                             </div>
@@ -201,12 +236,60 @@ export default function OrdersPage() {
                     </div>
                 )}
             </div>
+
+            {/* Feedback Modal */}
+            {feedbackOrder && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+                    <div className="bg-white rounded-3xl w-full max-w-md overflow-hidden animate-zoom-in">
+                        <div className="p-6">
+                            <h3 className="text-xl font-display font-bold text-gray-800 mb-2">Rate Order #{feedbackOrder.orderId}</h3>
+                            <p className="text-gray-500 text-sm mb-6">How was your experience with "Zayko"?</p>
+
+                            {/* Stars */}
+                            <div className="flex items-center justify-center gap-2 mb-8 text-4xl">
+                                {[1, 2, 3, 4, 5].map((star) => (
+                                    <button
+                                        key={star}
+                                        onClick={() => setRating(star)}
+                                        className={`transition-transform active:scale-90 ${star <= rating ? "text-gold-500" : "text-gray-200"}`}
+                                    >
+                                        ★
+                                    </button>
+                                ))}
+                            </div>
+
+                            <textarea
+                                value={comment}
+                                onChange={(e) => setComment(e.target.value)}
+                                placeholder="Any comments? (optional)"
+                                className="w-full h-32 p-4 bg-gray-50 border border-gray-100 rounded-2xl text-sm focus:ring-2 focus:ring-gold-400 outline-none resize-none mb-6"
+                            />
+
+                            <div className="flex gap-3">
+                                <button
+                                    onClick={() => setFeedbackOrder(null)}
+                                    className="flex-1 py-3 text-sm font-bold text-gray-500 hover:text-gray-700 transition-colors"
+                                >
+                                    Skip
+                                </button>
+                                <button
+                                    onClick={submitFeedback}
+                                    disabled={submitting}
+                                    className="flex-[2] py-4 bg-gold-400 text-zayko-900 font-display font-bold rounded-2xl hover:bg-gold-500 transition-all disabled:opacity-50"
+                                >
+                                    {submitting ? "Sending..." : "Submit Review"}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }
 
 /* ─── Order Card Component ───────────────────────────────── */
-function OrderCard({ order }: { order: Order }) {
+function OrderCard({ order, onReview }: { order: Order; onReview?: () => void }) {
     const st = statusConfig[order.status] || statusConfig.pending;
 
     return (
@@ -246,7 +329,18 @@ function OrderCard({ order }: { order: Order }) {
                         <span className="text-gray-500">₹{item.price * item.quantity}</span>
                     </div>
                 ))}
+
+                {/* Feedback Button for Past Orders */}
+                {order.status === "completed" && onReview && (
+                    <button
+                        onClick={onReview}
+                        className="mt-4 w-full py-2.5 border-2 border-zayko-100 text-zayko-600 rounded-xl text-sm font-bold hover:bg-zayko-50 hover:border-zayko-200 transition-all flex items-center justify-center gap-2"
+                    >
+                        ⭐ Review Order
+                    </button>
+                )}
             </div>
         </div>
     );
 }
+

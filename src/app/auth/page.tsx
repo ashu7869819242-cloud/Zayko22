@@ -10,24 +10,30 @@ import { db } from "@/lib/firebase";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
 
-type Step = "login" | "profile";
+type Step = "login" | "profile" | "setup-pin";
 
 export default function AuthPage() {
     const { user, loading } = useAuth();
     const router = useRouter();
     const [step, setStep] = useState<Step>("login");
     const [name, setName] = useState("");
-    const [rollNumber, setRollNumber] = useState("");
+    const [phone, setPhone] = useState("");
+    const [pin, setPin] = useState("");
+    const [confirmPin, setConfirmPin] = useState("");
     const [error, setError] = useState("");
     const [sending, setSending] = useState(false);
 
     useEffect(() => {
         if (!loading && user) {
-            // Check if profile exists — if yes, redirect
             const checkProfile = async () => {
                 const userDoc = await getDoc(doc(db, "users", user.uid));
                 if (userDoc.exists()) {
-                    router.push("/");
+                    const data = userDoc.data();
+                    if (!data.pinHash) {
+                        setStep("setup-pin");
+                    } else {
+                        router.push("/");
+                    }
                 } else {
                     setStep("profile");
                 }
@@ -44,16 +50,19 @@ export default function AuthPage() {
             const result = await signInWithPopup(auth, provider);
             const uid = result.user.uid;
 
-            // Check if user profile exists
             const userDoc = await getDoc(doc(db, "users", uid));
             if (userDoc.exists()) {
-                router.push("/");
+                const data = userDoc.data();
+                if (!data.pinHash) {
+                    setStep("setup-pin");
+                } else {
+                    router.push("/");
+                }
             } else {
                 setStep("profile");
             }
         } catch (err) {
             if (err instanceof Error && err.message.includes("popup-closed")) {
-                // User closed the popup — not an error
                 setError("");
             } else {
                 setError(err instanceof Error ? err.message : "Failed to sign in with Google");
@@ -64,16 +73,28 @@ export default function AuthPage() {
 
     const saveProfile = async () => {
         setError("");
-        if (!name.trim() || !rollNumber.trim()) {
-            setError("Please fill all fields");
+        if (step === "profile") {
+            if (!name.trim() || phone.length !== 10) {
+                setError("Please fill Name and 10-digit Phone");
+                return;
+            }
+        }
+
+        if (pin.length !== 4) {
+            setError("PIN must be 4 digits");
             return;
         }
+
+        if (pin !== confirmPin) {
+            setError("PINs do not match!");
+            return;
+        }
+
         setSending(true);
         try {
             const currentUser = auth.currentUser;
             if (!currentUser) throw new Error("Not authenticated");
 
-            // SECURITY: Create profile server-side instead of client-side Firestore write
             const token = await currentUser.getIdToken();
             const res = await fetch("/api/users/register", {
                 method: "POST",
@@ -83,7 +104,8 @@ export default function AuthPage() {
                 },
                 body: JSON.stringify({
                     name: name.trim(),
-                    rollNumber: rollNumber.trim(),
+                    phone,
+                    pin,
                 }),
             });
 
@@ -108,7 +130,6 @@ export default function AuthPage() {
     return (
         <div className="min-h-screen bg-gradient-to-br from-zayko-500 via-zayko-600 to-zayko-800 flex items-center justify-center p-4">
             <div className="w-full max-w-md">
-                {/* Header */}
                 <div className="text-center mb-8 animate-fade-in">
                     <div className="w-20 h-20 bg-white/10 backdrop-blur-xl rounded-2xl flex items-center justify-center mx-auto mb-4 text-4xl">
                         ⚡
@@ -117,7 +138,6 @@ export default function AuthPage() {
                     <p className="text-zayko-200 mt-1">Order Smart. Eat Fresh.</p>
                 </div>
 
-                {/* Card */}
                 <div className="bg-white/95 backdrop-blur-xl rounded-3xl shadow-2xl p-8 animate-slide-up">
                     {step === "login" && (
                         <>
@@ -131,10 +151,10 @@ export default function AuthPage() {
                                     className="w-full flex items-center justify-center gap-3 px-6 py-3.5 bg-white border-2 border-gray-200 rounded-xl font-semibold text-gray-700 hover:bg-gray-50 hover:border-gray-300 transition-all duration-200 shadow-sm hover:shadow-md"
                                 >
                                     {sending ? (
-                                        <>
+                                        <div className="flex items-center gap-2">
                                             <div className="w-5 h-5 border-2 border-zayko-500 border-t-transparent rounded-full animate-spin"></div>
                                             Signing in...
-                                        </>
+                                        </div>
                                     ) : (
                                         <>
                                             <svg className="w-5 h-5" viewBox="0 0 24 24">
@@ -153,8 +173,8 @@ export default function AuthPage() {
 
                     {step === "profile" && (
                         <>
-                            <h2 className="text-xl font-display font-bold text-zayko-700 mb-1">Complete Profile 📝</h2>
-                            <p className="text-gray-500 text-sm mb-6">Tell us about yourself</p>
+                            <h2 className="text-xl font-display font-bold text-zayko-700 mb-1">Create Account 📝</h2>
+                            <p className="text-gray-500 text-sm mb-6">Complete your profile to order food</p>
 
                             <div className="space-y-4">
                                 <div>
@@ -169,22 +189,89 @@ export default function AuthPage() {
                                 </div>
 
                                 <div>
-                                    <label className="text-sm font-medium text-gray-700 mb-1 block">Roll Number</label>
+                                    <label className="text-sm font-medium text-gray-700 mb-1 block">Mobile Number</label>
                                     <input
-                                        type="text"
-                                        value={rollNumber}
-                                        onChange={(e) => setRollNumber(e.target.value)}
-                                        placeholder="e.g. CS2024001"
-                                        className="input-field uppercase"
+                                        type="tel"
+                                        maxLength={10}
+                                        value={phone}
+                                        onChange={(e) => setPhone(e.target.value.replace(/\D/g, ""))}
+                                        placeholder="Enter 10-digit mobile number"
+                                        className="input-field font-mono tracking-widest text-center"
+                                    />
+                                </div>
+
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label className="text-sm font-medium text-gray-700 mb-1 block">Set PIN</label>
+                                        <input
+                                            type="password"
+                                            maxLength={4}
+                                            value={pin}
+                                            onChange={(e) => setPin(e.target.value.replace(/\D/g, ""))}
+                                            placeholder="● ● ● ●"
+                                            className="input-field text-center font-mono"
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="text-sm font-medium text-gray-700 mb-1 block">Confirm PIN</label>
+                                        <input
+                                            type="password"
+                                            maxLength={4}
+                                            value={confirmPin}
+                                            onChange={(e) => setConfirmPin(e.target.value.replace(/\D/g, ""))}
+                                            placeholder="● ● ● ●"
+                                            className="input-field text-center font-mono"
+                                        />
+                                    </div>
+                                </div>
+
+                                <button
+                                    onClick={saveProfile}
+                                    disabled={sending || !name.trim() || phone.length !== 10 || pin.length !== 4 || confirmPin.length !== 4}
+                                    className="btn-primary w-full mt-2"
+                                >
+                                    {sending ? "Creating Account..." : "Complete Registration 🚀"}
+                                </button>
+                            </div>
+                        </>
+                    )}
+
+                    {step === "setup-pin" && (
+                        <>
+                            <h2 className="text-xl font-display font-bold text-zayko-700 mb-1">Set Your Security PIN 🔐</h2>
+                            <p className="text-gray-500 text-sm mb-6">Existing users must set a 4-digit security PIN</p>
+
+                            <div className="space-y-4">
+                                <div>
+                                    <label className="text-sm font-medium text-gray-700 mb-1 block">Create 4-Digit PIN</label>
+                                    <input
+                                        type="password"
+                                        maxLength={4}
+                                        value={pin}
+                                        onChange={(e) => setPin(e.target.value.replace(/\D/g, ""))}
+                                        placeholder="● ● ● ●"
+                                        className="input-field text-center text-2xl font-mono tracking-[1em]"
+                                    />
+                                </div>
+
+                                <div>
+                                    <label className="text-sm font-medium text-gray-700 mb-1 block">Confirm 4-Digit PIN</label>
+                                    <input
+                                        type="password"
+                                        maxLength={4}
+                                        value={confirmPin}
+                                        onChange={(e) => setConfirmPin(e.target.value.replace(/\D/g, ""))}
+                                        placeholder="● ● ● ●"
+                                        className="input-field text-center text-2xl font-mono tracking-[1em]"
                                     />
                                 </div>
 
                                 <button
                                     onClick={saveProfile}
-                                    disabled={sending || !name.trim() || !rollNumber.trim()}
-                                    className="btn-primary w-full"
+                                    disabled={sending || pin.length !== 4 || confirmPin.length !== 4}
+                                    className="btn-primary w-full mt-2"
                                 >
-                                    {sending ? "Saving..." : "Let's Go! 🚀"}
+                                    {sending ? "Saving PIN..." : "Save & Continue 🚀"}
                                 </button>
                             </div>
                         </>

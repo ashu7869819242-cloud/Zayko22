@@ -91,6 +91,7 @@ export default function AdminDashboard() {
     const adminLinks = [
         { href: "/admin/orders", label: "Manage Orders", icon: "📋", color: "from-blue-500 to-blue-600" },
         { href: "/admin/menu", label: "Manage Menu", icon: "🍽️", color: "from-teal-500 to-teal-600" },
+        { href: "/admin/feedbacks", label: "Customer Feedback", icon: "⭐", color: "from-gold-500 to-gold-600" },
         { href: "/admin/settings", label: "Settings", icon: "⚙️", color: "from-purple-500 to-purple-600" },
     ];
 
@@ -119,6 +120,9 @@ export default function AdminDashboard() {
                             </Link>
                             <Link href="/admin/settings" className="flex items-center gap-2 px-4 py-2 bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 text-sm rounded-xl transition-all whitespace-nowrap">
                                 ⚙️ Settings
+                            </Link>
+                            <Link href="/admin/feedbacks" className="flex items-center gap-2 px-4 py-2 bg-gold-500/10 hover:bg-gold-500/20 text-gold-400 text-sm rounded-xl transition-all whitespace-nowrap">
+                                ⭐ Feedback
                             </Link>
                             <button
                                 onClick={() => { localStorage.removeItem("adminToken"); window.location.href = "/admin"; }}

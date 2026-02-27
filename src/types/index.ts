@@ -8,9 +8,10 @@
 export interface UserProfile {
     uid: string;
     email: string;
-    name: string;
     phone: string;
-    rollNumber: string;
+    pinHash: string; // BCrypt hash of 4-digit PIN
+    name: string;
+    rollNumber?: string;
     walletBalance: number;
     uniqueCode: string;
     role: "user" | "admin";
@@ -147,4 +148,16 @@ export interface AutoOrderExecution {
     failureReason?: string;
     amountDeducted?: number;
     executedAt: string;
+}
+
+// ─── Feedback ───────────────────────────────────
+
+export interface Feedback {
+    id?: string;
+    orderId: string;
+    userId: string;
+    userName: string;
+    rating: number; // 1-5
+    comment: string;
+    createdAt: string;
 }

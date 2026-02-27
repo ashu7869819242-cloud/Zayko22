@@ -10,6 +10,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { adminDb, adminAuth } from "@/lib/firebase-admin";
 import crypto from "crypto";
+import bcrypt from "bcryptjs";
 
 export const runtime = "nodejs";
 
@@ -45,7 +46,6 @@ async function generateUniqueCode(): Promise<string> {
 }
 
 export async function POST(req: NextRequest) {
-    // SECURITY: Require Firebase ID token
     const authHeader = req.headers.get("authorization");
     if (!authHeader?.startsWith("Bearer ")) {
         return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -64,42 +64,68 @@ export async function POST(req: NextRequest) {
     }
 
     try {
-        const { name, rollNumber, phone } = await req.json();
-
-        // Server-side validation
-        if (!name || typeof name !== "string" || name.trim().length < 2) {
-            return NextResponse.json({ error: "Valid name is required (min 2 characters)" }, { status: 400 });
-        }
-
-        if (!rollNumber || typeof rollNumber !== "string" || rollNumber.trim().length < 3) {
-            return NextResponse.json({ error: "Valid roll number is required (min 3 characters)" }, { status: 400 });
-        }
+        const { name, phone, pin } = await req.json();
 
         // Check if user already exists
-        const existingDoc = await adminDb.collection("users").doc(uid).get();
-        if (existingDoc.exists) {
-            return NextResponse.json({ error: "User profile already exists" }, { status: 409 });
+        const userRef = adminDb.collection("users").doc(uid);
+        const userDoc = await userRef.get();
+
+        // PIN validation (common for both new and existing)
+        if (!pin || !/^\d{4}$/.test(pin)) {
+            return NextResponse.json({ error: "4-digit PIN is required" }, { status: 400 });
+        }
+
+        const pinHash = await bcrypt.hash(pin, 10);
+
+        if (userDoc.exists) {
+            const userData = userDoc.data();
+            if (!userData) return NextResponse.json({ error: "User data missing" }, { status: 404 });
+
+            // If user exists, we only allow updating PIN if it's missing (migration case)
+            if (userData.pinHash) {
+                return NextResponse.json({ error: "PIN already set for this account" }, { status: 409 });
+            }
+
+            // Update existing user with PIN
+            await userRef.update({
+                pinHash,
+                // Optionally update name/phone if they were missing (from very old accounts)
+                ...(name && !userData.name ? { name: name.trim() } : {}),
+                ...(phone && !userData.phone ? { phone: phone.trim() } : {}),
+                updatedAt: new Date().toISOString()
+            });
+
+            return NextResponse.json({ success: true, message: "PIN set successfully" });
+        }
+
+        // --- NEW USER REGISTRATION ---
+        if (!name || typeof name !== "string" || name.trim().length < 2) {
+            return NextResponse.json({ error: "Valid name is required" }, { status: 400 });
+        }
+
+        if (!phone || !/^\d{10}$/.test(phone)) {
+            return NextResponse.json({ error: "Valid 10-digit phone number is required" }, { status: 400 });
         }
 
         // Generate globally unique code
         const uniqueCode = await generateUniqueCode();
 
-        // SECURITY: Create user doc server-side with enforced walletBalance = 0
-        await adminDb.collection("users").doc(uid).set({
+        // Create new user doc
+        await userRef.set({
             uid,
             email: email || "",
             name: name.trim(),
-            rollNumber: rollNumber.trim().toUpperCase(),
-            phone: typeof phone === "string" ? phone.trim() : "",
+            phone: phone.trim(),
+            pinHash,
             uniqueCode,
             role: "user",
-            walletBalance: 0, // SECURITY: Always starts at zero — no client override
+            walletBalance: 0,
             createdAt: new Date().toISOString(),
         });
 
         return NextResponse.json({ success: true, uniqueCode });
     } catch (error) {
-        console.error("User registration failed:", error);
-        return NextResponse.json({ error: "Failed to create profile" }, { status: 500 });
+        console.error("User registration/setup failed:", error);
+        return NextResponse.json({ error: "Failed to process request" }, { status: 500 });
     }
 }
