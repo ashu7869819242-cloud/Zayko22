@@ -47,7 +47,7 @@ export default function AdminGuard({ children }: { children: React.ReactNode }) 
 
     if (checking) {
         return (
-            <div className="min-h-screen flex items-center justify-center bg-campus-900">
+            <div className="min-h-screen flex items-center justify-center bg-zayko-900">
                 <div className="w-12 h-12 border-4 border-gold-400 border-t-transparent rounded-full animate-spin"></div>
             </div>
         );

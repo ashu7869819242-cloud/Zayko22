@@ -4,17 +4,17 @@
 
 /* ── Tailwind v4 Theme ── */
 @theme {
-  /* College-themed palette */
-  --color-campus-50: #eff6ff;
-  --color-campus-100: #dbeafe;
-  --color-campus-200: #bfdbfe;
-  --color-campus-300: #93c5fd;
-  --color-campus-400: #60a5fa;
-  --color-campus-500: #1e3a5f;
-  --color-campus-600: #162d4a;
-  --color-campus-700: #0f2035;
-  --color-campus-800: #0a1628;
-  --color-campus-900: #050b14;
+  /* Zayko brand palette */
+  --color-zayko-50: #eff6ff;
+  --color-zayko-100: #dbeafe;
+  --color-zayko-200: #bfdbfe;
+  --color-zayko-300: #93c5fd;
+  --color-zayko-400: #60a5fa;
+  --color-zayko-500: #1e3a5f;
+  --color-zayko-600: #162d4a;
+  --color-zayko-700: #0f2035;
+  --color-zayko-800: #0a1628;
+  --color-zayko-900: #050b14;
 
   /* Gold accent */
   --color-gold-50: #fffbeb;
@@ -369,11 +369,12 @@ body {
 /* ── Print Styles ── */
 @media print {
 
-  /* Hide everything except the invoice */
+  /* Hide everything by default */
   body * {
     visibility: hidden;
   }
 
+  /* A4 Invoice print */
   .invoice-print-area,
   .invoice-print-area * {
     visibility: visible;
@@ -390,10 +391,38 @@ body {
     font-size: 12pt;
   }
 
+  /* Thermal Receipt print */
+  .thermal-receipt-area,
+  .thermal-receipt-area * {
+    visibility: visible;
+  }
+
+  .thermal-receipt-area {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 80mm !important;
+    max-width: 80mm !important;
+    padding: 3mm !important;
+    margin: 0 !important;
+    background: white !important;
+    color: black !important;
+    font-family: 'Courier New', Courier, monospace !important;
+    font-size: 10pt !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+  }
+
+  .thermal-receipt-area pre {
+    white-space: pre-wrap !important;
+    word-break: break-word !important;
+  }
+
   .no-print {
     display: none !important;
   }
 
+  /* Default A4 page, overridden below for thermal */
   @page {
     size: A4 portrait;
     margin: 10mm;

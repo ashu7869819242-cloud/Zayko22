@@ -65,7 +65,7 @@ export default function AdminSettingsPage() {
     if (loading) {
         return (
             <div className="min-h-screen flex items-center justify-center">
-                <div className="w-12 h-12 border-4 border-campus-500 border-t-transparent rounded-full animate-spin"></div>
+                <div className="w-12 h-12 border-4 border-zayko-500 border-t-transparent rounded-full animate-spin"></div>
             </div>
         );
     }
@@ -74,7 +74,7 @@ export default function AdminSettingsPage() {
         <div className="min-h-screen bg-gray-50 pb-20">
             <div className="page-container max-w-2xl">
                 <div className="flex items-center gap-3 mb-8">
-                    <button onClick={() => router.push("/admin/dashboard")} className="text-campus-600 hover:text-campus-800">
+                    <button onClick={() => router.push("/admin/dashboard")} className="text-zayko-600 hover:text-zayko-800">
                         ← Back
                     </button>
                     <h1 className="section-title">⚙️ Canteen Settings</h1>
@@ -84,7 +84,7 @@ export default function AdminSettingsPage() {
                     {/* Open/Close Toggle */}
                     <div className="flex items-center justify-between">
                         <div>
-                            <h3 className="font-display font-bold text-lg text-campus-700">Canteen Status</h3>
+                            <h3 className="font-display font-bold text-lg text-zayko-700">Canteen Status</h3>
                             <p className="text-sm text-gray-500">Toggle the canteen open or closed</p>
                         </div>
                         <button
@@ -106,7 +106,7 @@ export default function AdminSettingsPage() {
 
                     {/* Operating Hours */}
                     <div>
-                        <h3 className="font-display font-bold text-lg text-campus-700 mb-4">🕐 Operating Hours</h3>
+                        <h3 className="font-display font-bold text-lg text-zayko-700 mb-4">🕐 Operating Hours</h3>
                         <div className="grid grid-cols-2 gap-6">
                             <div>
                                 <label className="text-sm font-medium text-gray-700 mb-1 block">Opening Time</label>

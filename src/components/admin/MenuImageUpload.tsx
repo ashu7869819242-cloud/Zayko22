@@ -129,7 +129,7 @@ export default function MenuImageUpload({ onItemsParsed, onClose }: MenuImageUpl
 
     return (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-            <div className="bg-campus-800 border border-campus-700 rounded-2xl p-6 w-full max-w-lg animate-scale-in">
+            <div className="bg-zayko-800 border border-zayko-700 rounded-2xl p-6 w-full max-w-lg animate-scale-in">
                 <div className="flex items-center justify-between mb-4">
                     <h3 className="text-lg font-display font-bold text-white">
                         🤖 AI Menu Scanner
@@ -137,13 +137,13 @@ export default function MenuImageUpload({ onItemsParsed, onClose }: MenuImageUpl
                     <button
                         onClick={onClose}
                         disabled={uploading}
-                        className="text-campus-400 hover:text-white transition-colors text-xl"
+                        className="text-zayko-400 hover:text-white transition-colors text-xl"
                     >
                         ✕
                     </button>
                 </div>
 
-                <p className="text-campus-400 text-sm mb-4">
+                <p className="text-zayko-400 text-sm mb-4">
                     Upload a photo of a menu board, paper menu, or screen. Our AI will automatically
                     detect food items, prices, and categories.
                 </p>
@@ -157,7 +157,7 @@ export default function MenuImageUpload({ onItemsParsed, onClose }: MenuImageUpl
                         onClick={() => fileInputRef.current?.click()}
                         className={`border-2 border-dashed rounded-xl p-8 text-center cursor-pointer transition-all ${dragOver
                                 ? "border-gold-400 bg-gold-400/10"
-                                : "border-campus-600 hover:border-campus-500 hover:bg-campus-700/50"
+                                : "border-zayko-600 hover:border-zayko-500 hover:bg-zayko-700/50"
                             }`}
                     >
                         {preview ? (
@@ -169,10 +169,10 @@ export default function MenuImageUpload({ onItemsParsed, onClose }: MenuImageUpl
                         ) : (
                             <div className="text-5xl mb-3">📸</div>
                         )}
-                        <p className="text-campus-300 font-medium">
+                        <p className="text-zayko-300 font-medium">
                             {preview ? "Click to choose a different image" : "Drop menu image here or click to upload"}
                         </p>
-                        <p className="text-campus-500 text-xs mt-1">
+                        <p className="text-zayko-500 text-xs mt-1">
                             JPEG, PNG, WebP — Max 10MB
                         </p>
                     </div>
@@ -190,7 +190,7 @@ export default function MenuImageUpload({ onItemsParsed, onClose }: MenuImageUpl
                             <div className="w-8 h-8 border-3 border-gold-400 border-t-transparent rounded-full animate-spin" />
                             <span className="text-gold-400 font-semibold">Analyzing menu...</span>
                         </div>
-                        <p className="text-campus-500 text-xs">
+                        <p className="text-zayko-500 text-xs">
                             AI is extracting items, prices, and categories from your image
                         </p>
                     </div>
@@ -217,7 +217,7 @@ export default function MenuImageUpload({ onItemsParsed, onClose }: MenuImageUpl
                     <button
                         onClick={onClose}
                         disabled={uploading}
-                        className="px-4 py-2 bg-campus-700 text-campus-300 rounded-xl hover:bg-campus-600 transition-all text-sm"
+                        className="px-4 py-2 bg-zayko-700 text-zayko-300 rounded-xl hover:bg-zayko-600 transition-all text-sm"
                     >
                         Cancel
                     </button>

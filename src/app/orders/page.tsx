@@ -141,7 +141,7 @@ export default function OrdersPage() {
     if (loading || ordersLoading) {
         return (
             <div className="min-h-screen flex items-center justify-center">
-                <div className="w-12 h-12 border-4 border-campus-500 border-t-transparent rounded-full animate-spin"></div>
+                <div className="w-12 h-12 border-4 border-zayko-500 border-t-transparent rounded-full animate-spin"></div>
             </div>
         );
     }
@@ -173,7 +173,7 @@ export default function OrdersPage() {
                         {/* Active Orders */}
                         {activeOrders.length > 0 && (
                             <div>
-                                <h2 className="text-lg font-display font-bold text-campus-600 mb-4 flex items-center gap-2">
+                                <h2 className="text-lg font-display font-bold text-zayko-600 mb-4 flex items-center gap-2">
                                     <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
                                     Active Orders
                                 </h2>
@@ -216,7 +216,7 @@ function OrderCard({ order }: { order: Order }) {
                 <div className="flex items-center justify-between">
                     <div>
                         <div className="flex items-center gap-2">
-                            <h3 className="font-display font-bold text-campus-700">
+                            <h3 className="font-display font-bold text-zayko-700">
                                 Order #{order.orderId}
                             </h3>
                             <span className={`badge ${st.bg} ${st.color}`}>

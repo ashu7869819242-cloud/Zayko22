@@ -7,6 +7,7 @@ import { collection, onSnapshot, query, orderBy } from "firebase/firestore";
 import toast from "react-hot-toast";
 import { useCountdown } from "@/hooks/useCountdown";
 import InvoiceModal from "@/components/InvoiceModal";
+import ThermalReceipt from "@/components/ThermalReceipt";
 
 interface OrderItem {
     name: string;
@@ -60,6 +61,20 @@ export default function AdminOrdersPage() {
     const [filter, setFilter] = useState("all");
     const [customPrepTimes, setCustomPrepTimes] = useState<Record<string, string>>({});
     const [invoiceOrder, setInvoiceOrder] = useState<AdminOrder | null>(null);
+    const [receiptOrder, setReceiptOrder] = useState<AdminOrder | null>(null);
+
+    // Search state
+    const [searchTerm, setSearchTerm] = useState("");
+    const [debouncedSearch, setDebouncedSearch] = useState("");
+    const [highlightOrderId, setHighlightOrderId] = useState<string | null>(null);
+
+    // Debounce search input
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setDebouncedSearch(searchTerm);
+        }, 300);
+        return () => clearTimeout(timer);
+    }, [searchTerm]);
 
     // Real-time subscription
     useEffect(() => {
@@ -102,18 +117,42 @@ export default function AdminOrdersPage() {
         }
     };
 
-    const filteredOrders = filter === "all" ? orders : orders.filter((o) => o.status === filter);
+    // Filter orders by status and search term
+    const filteredOrders = orders.filter((o) => {
+        const matchesStatus = filter === "all" || o.status === filter;
+        const matchesSearch = !debouncedSearch ||
+            o.orderId.toLowerCase().includes(debouncedSearch.toLowerCase()) ||
+            o.userName.toLowerCase().includes(debouncedSearch.toLowerCase());
+        return matchesStatus && matchesSearch;
+    });
+
     const pendingCount = orders.filter((o) => o.status === "pending").length;
     const preparingCount = orders.filter((o) => o.status === "preparing").length;
 
+    // Auto-scroll to highlighted order when search changes
+    useEffect(() => {
+        if (debouncedSearch && filteredOrders.length > 0) {
+            const topMatch = filteredOrders[0];
+            setHighlightOrderId(topMatch.orderId);
+            setTimeout(() => {
+                const el = document.getElementById(`order-${topMatch.orderId}`);
+                if (el) {
+                    el.scrollIntoView({ behavior: "smooth", block: "center" });
+                }
+            }, 100);
+        } else {
+            setHighlightOrderId(null);
+        }
+    }, [debouncedSearch, filteredOrders]);
+
     return (
         <AdminGuard>
-            <div className="min-h-screen bg-campus-900">
+            <div className="min-h-screen bg-zayko-900">
                 {/* Header */}
-                <div className="bg-campus-800 border-b border-campus-700 px-6 py-4">
+                <div className="bg-zayko-800 border-b border-zayko-700 px-6 py-4">
                     <div className="max-w-7xl mx-auto flex items-center justify-between">
                         <div className="flex items-center gap-3">
-                            <Link href="/admin/dashboard" className="text-campus-400 hover:text-white transition-colors">
+                            <Link href="/admin/dashboard" className="text-zayko-400 hover:text-white transition-colors">
                                 ← Dashboard
                             </Link>
                             <h1 className="text-lg font-display font-bold text-white">📋 Orders</h1>
@@ -132,6 +171,28 @@ export default function AdminOrdersPage() {
                 </div>
 
                 <div className="max-w-7xl mx-auto p-6">
+                    {/* Search Bar */}
+                    <div className="mb-6 bg-zayko-800/50 border border-zayko-700 rounded-2xl p-4 animate-fade-in">
+                        <div className="relative">
+                            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-xl">🔍</span>
+                            <input
+                                type="text"
+                                placeholder="Search by Order ID or Customer Name..."
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                                className="w-full pl-12 pr-12 py-3 bg-zayko-800 border border-zayko-600 rounded-xl text-white placeholder-zayko-400 focus:outline-none focus:ring-2 focus:ring-gold-500 transition-all font-mono"
+                            />
+                            {searchTerm && (
+                                <button
+                                    onClick={() => setSearchTerm("")}
+                                    className="absolute right-4 top-1/2 -translate-y-1/2 text-zayko-400 hover:text-white transition-colors"
+                                >
+                                    ✕
+                                </button>
+                            )}
+                        </div>
+                    </div>
+
                     {/* Status Filters */}
                     <div className="flex gap-2 overflow-x-auto pb-4 mb-6">
                         {["all", ...STATUS_OPTIONS].map((s) => (
@@ -139,8 +200,8 @@ export default function AdminOrdersPage() {
                                 key={s}
                                 onClick={() => setFilter(s)}
                                 className={`px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap capitalize transition-all ${filter === s
-                                    ? "bg-gold-500 text-campus-900"
-                                    : "bg-campus-800 text-campus-400 hover:bg-campus-700"
+                                    ? "bg-gold-500 text-zayko-900"
+                                    : "bg-zayko-800 text-zayko-400 hover:bg-zayko-700"
                                     }`}
                             >
                                 {s} {s !== "all" && `(${orders.filter((o) => o.status === s).length})`}
@@ -153,16 +214,27 @@ export default function AdminOrdersPage() {
                             <div className="w-12 h-12 border-4 border-gold-400 border-t-transparent rounded-full animate-spin"></div>
                         </div>
                     ) : filteredOrders.length === 0 ? (
-                        <div className="text-center py-20 text-campus-500">
-                            <div className="text-5xl mb-4">📋</div>
-                            <p>No orders found</p>
+                        <div className="text-center py-20 text-zayko-500">
+                            <div className="text-5xl mb-4">📭</div>
+                            {debouncedSearch ? (
+                                <p>Order <strong className="text-white">"{debouncedSearch}"</strong> not found.</p>
+                            ) : (
+                                <p>No orders found</p>
+                            )}
                         </div>
                     ) : (
                         <div className="space-y-4">
                             {filteredOrders.map((order) => (
-                                <div key={order.id} className="bg-campus-800/50 border border-campus-700 rounded-2xl overflow-hidden animate-slide-up">
+                                <div
+                                    key={order.id}
+                                    id={`order-${order.orderId}`}
+                                    className={`bg-zayko-800/50 border-2 rounded-2xl overflow-hidden transition-all duration-500 animate-slide-up ${highlightOrderId === order.orderId
+                                        ? "border-gold-400 shadow-[0_0_30px_rgba(255,215,0,0.15)] ring-2 ring-gold-400/50"
+                                        : "border-zayko-700 hover:border-zayko-600"
+                                        }`}
+                                >
                                     {/* Order Header */}
-                                    <div className="p-5 border-b border-campus-700">
+                                    <div className="p-5 border-b border-zayko-700">
                                         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                                             <div>
                                                 <div className="flex items-center gap-2 flex-wrap">
@@ -175,7 +247,7 @@ export default function AdminOrdersPage() {
                                                         <AdminCountdown readyAt={order.readyAt || order.estimatedReadyAt} />
                                                     )}
                                                 </div>
-                                                <div className="flex items-center gap-3 mt-1 text-sm text-campus-400">
+                                                <div className="flex items-center gap-3 mt-1 text-sm text-zayko-400">
                                                     <span>👤 {order.userName}</span>
                                                     <span>📧 {order.userEmail}</span>
                                                     <span>🕐 {new Date(order.createdAt).toLocaleString()}</span>
@@ -186,11 +258,11 @@ export default function AdminOrdersPage() {
                                     </div>
 
                                     {/* Items */}
-                                    <div className="p-5 border-b border-campus-700 bg-campus-800/30">
+                                    <div className="p-5 border-b border-zayko-700 bg-zayko-800/30">
                                         {order.items.map((item, idx) => (
                                             <div key={idx} className="flex justify-between py-1 text-sm">
-                                                <span className="text-campus-300">{item.name} × {item.quantity}</span>
-                                                <span className="text-campus-400">₹{item.price * item.quantity}</span>
+                                                <span className="text-zayko-300">{item.name} × {item.quantity}</span>
+                                                <span className="text-zayko-400">₹{item.price * item.quantity}</span>
                                             </div>
                                         ))}
                                     </div>
@@ -199,15 +271,15 @@ export default function AdminOrdersPage() {
                                     <div className="p-5 space-y-3">
                                         {/* Status Update */}
                                         <div className="flex items-center gap-2 flex-wrap">
-                                            <span className="text-xs text-campus-500">Status:</span>
+                                            <span className="text-xs text-zayko-500">Status:</span>
                                             {STATUS_OPTIONS.map((s) => (
                                                 <button
                                                     key={s}
                                                     onClick={() => updateOrder(order.id, { status: s })}
                                                     disabled={order.status === s}
                                                     className={`px-3 py-1.5 rounded-lg text-xs font-medium capitalize transition-all ${order.status === s
-                                                        ? "bg-gold-500 text-campus-900"
-                                                        : "bg-campus-700 text-campus-300 hover:bg-campus-600"
+                                                        ? "bg-gold-500 text-zayko-900"
+                                                        : "bg-zayko-700 text-zayko-300 hover:bg-zayko-600"
                                                         }`}
                                                 >
                                                     {s}
@@ -217,14 +289,14 @@ export default function AdminOrdersPage() {
 
                                         {/* Prep Time + Mark Ready */}
                                         <div className="flex items-center gap-2 flex-wrap">
-                                            <span className="text-xs text-campus-500">Prep:</span>
+                                            <span className="text-xs text-zayko-500">Prep:</span>
                                             {PREP_TIMES.map((t) => (
                                                 <button
                                                     key={t}
                                                     onClick={() => updateOrder(order.id, { status: "preparing", prepTime: t })}
                                                     className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${order.prepTime === t && order.status === "preparing"
                                                         ? "bg-teal-500 text-white"
-                                                        : "bg-campus-700 text-campus-300 hover:bg-campus-600"
+                                                        : "bg-zayko-700 text-zayko-300 hover:bg-zayko-600"
                                                         }`}
                                                 >
                                                     +{t}m
@@ -240,7 +312,7 @@ export default function AdminOrdersPage() {
                                                     placeholder="min"
                                                     value={customPrepTimes[order.id] || ""}
                                                     onChange={(e) => setCustomPrepTimes((prev) => ({ ...prev, [order.id]: e.target.value }))}
-                                                    className="w-16 px-2 py-1.5 rounded-lg bg-campus-700 text-white text-xs border border-campus-600 focus:border-teal-500 focus:outline-none placeholder:text-campus-500"
+                                                    className="w-16 px-2 py-1.5 rounded-lg bg-zayko-700 text-white text-xs border border-zayko-600 focus:border-teal-500 focus:outline-none placeholder:text-zayko-500"
                                                 />
                                                 <button
                                                     onClick={() => {
@@ -271,9 +343,17 @@ export default function AdminOrdersPage() {
                                             {/* Print Invoice */}
                                             <button
                                                 onClick={() => setInvoiceOrder(order)}
-                                                className="px-4 py-2 rounded-xl text-sm font-bold bg-campus-500 text-white hover:bg-campus-600 transition-all"
+                                                className="px-4 py-2 rounded-xl text-sm font-bold bg-zayko-500 text-white hover:bg-zayko-600 transition-all"
                                             >
-                                                🖨️ Print Invoice
+                                                🖨️ Invoice
+                                            </button>
+
+                                            {/* Thermal Receipt */}
+                                            <button
+                                                onClick={() => setReceiptOrder(order)}
+                                                className="px-4 py-2 rounded-xl text-sm font-bold bg-gold-600 text-white hover:bg-gold-500 transition-all"
+                                            >
+                                                🧾 Receipt
                                             </button>
                                         </div>
                                     </div>
@@ -287,6 +367,11 @@ export default function AdminOrdersPage() {
             {/* Invoice Modal */}
             {invoiceOrder && (
                 <InvoiceModal order={invoiceOrder} onClose={() => setInvoiceOrder(null)} />
+            )}
+
+            {/* Thermal Receipt Modal */}
+            {receiptOrder && (
+                <ThermalReceipt order={receiptOrder} onClose={() => setReceiptOrder(null)} />
             )}
         </AdminGuard>
     );

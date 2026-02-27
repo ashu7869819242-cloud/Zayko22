@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
 import { db } from "@/lib/firebase";
-import { collection, doc, onSnapshot, query } from "firebase/firestore";
+import { collection, doc, onSnapshot, query, orderBy } from "firebase/firestore";
 import MenuCard from "@/components/MenuCard";
 import { useCart } from "@/context/CartContext";
 import Link from "next/link";
@@ -26,7 +26,12 @@ interface CanteenConfig {
   endTime: string;
 }
 
-const CATEGORIES = ["all", "meals", "snacks", "beverages", "desserts", "other"];
+interface CategoryDoc {
+  id: string;
+  name: string;
+  slug: string;
+  order: number;
+}
 
 export default function MenuPage() {
   const { user, profile, loading } = useAuth();
@@ -37,6 +42,7 @@ export default function MenuPage() {
   const [category, setCategory] = useState("all");
   const [menuLoading, setMenuLoading] = useState(true);
   const [canteenConfig, setCanteenConfig] = useState<CanteenConfig | null>(null);
+  const [categories, setCategories] = useState<CategoryDoc[]>([]);
 
   useEffect(() => {
     if (!loading && !user) {
@@ -64,6 +70,15 @@ export default function MenuPage() {
       if (snap.exists()) {
         setCanteenConfig(snap.data() as CanteenConfig);
       }
+    });
+    return () => unsub();
+  }, []);
+
+  // Real-time categories subscription
+  useEffect(() => {
+    const q = query(collection(db, "categories"), orderBy("order", "asc"));
+    const unsub = onSnapshot(q, (snap) => {
+      setCategories(snap.docs.map((d) => ({ id: d.id, ...d.data() })) as CategoryDoc[]);
     });
     return () => unsub();
   }, []);
@@ -98,7 +113,7 @@ export default function MenuPage() {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="w-12 h-12 border-4 border-campus-500 border-t-transparent rounded-full animate-spin"></div>
+        <div className="w-12 h-12 border-4 border-zayko-500 border-t-transparent rounded-full animate-spin"></div>
       </div>
     );
   }
@@ -129,11 +144,11 @@ export default function MenuPage() {
               <h1 className="text-3xl sm:text-4xl font-display font-bold">
                 Hey {profile?.name?.split(" ")[0] || "there"}! 👋
               </h1>
-              <p className="text-campus-200 mt-1">What are you craving today?</p>
+              <p className="text-zayko-200 mt-1">What are you craving today?</p>
             </div>
             <div className="flex items-center gap-3">
               <div className="bg-white/10 backdrop-blur-xl rounded-2xl px-4 py-3 text-sm">
-                <span className="text-campus-200">Wallet:</span>{" "}
+                <span className="text-zayko-200">Wallet:</span>{" "}
                 <span className="font-bold text-gold-300">₹{profile?.walletBalance || 0}</span>
               </div>
               <div className="bg-white/10 backdrop-blur-xl rounded-2xl px-4 py-3 text-sm">
@@ -149,22 +164,31 @@ export default function MenuPage() {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="🔍 Search for dishes..."
-              className="w-full px-5 py-4 rounded-2xl bg-white/10 backdrop-blur-xl border border-white/20 text-white placeholder:text-campus-300 focus:outline-none focus:ring-2 focus:ring-gold-400 text-lg"
+              className="w-full px-5 py-4 rounded-2xl bg-white/10 backdrop-blur-xl border border-white/20 text-white placeholder:text-zayko-300 focus:outline-none focus:ring-2 focus:ring-gold-400 text-lg"
             />
           </div>
 
           {/* Category Filters */}
           <div className="mt-4 flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
-            {CATEGORIES.map((cat) => (
+            <button
+              onClick={() => setCategory("all")}
+              className={`px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap capitalize transition-all ${category === "all"
+                ? "bg-gold-400 text-zayko-900 shadow-gold-glow"
+                : "bg-white/10 text-white hover:bg-white/20"
+                }`}
+            >
+              🍽️ All
+            </button>
+            {categories.map((cat) => (
               <button
-                key={cat}
-                onClick={() => setCategory(cat)}
-                className={`px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap capitalize transition-all ${category === cat
-                  ? "bg-gold-400 text-campus-900 shadow-gold-glow"
+                key={cat.id}
+                onClick={() => setCategory(cat.slug)}
+                className={`px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap capitalize transition-all ${category === cat.slug
+                  ? "bg-gold-400 text-zayko-900 shadow-gold-glow"
                   : "bg-white/10 text-white hover:bg-white/20"
                   }`}
               >
-                {cat === "all" ? "🍽️ All" : cat === "meals" ? "🍱 Meals" : cat === "snacks" ? "🍿 Snacks" : cat === "beverages" ? "☕ Beverages" : cat === "desserts" ? "🍰 Desserts" : "📦 Other"}
+                {cat.name}
               </button>
             ))}
           </div>
@@ -176,7 +200,7 @@ export default function MenuPage() {
         {menuLoading ? (
           <div className="flex items-center justify-center py-20">
             <div className="text-center">
-              <div className="w-12 h-12 border-4 border-campus-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+              <div className="w-12 h-12 border-4 border-zayko-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
               <p className="text-gray-500">Loading menu...</p>
             </div>
           </div>
@@ -202,7 +226,7 @@ export default function MenuPage() {
         <div className="fixed bottom-4 left-4 right-4 sm:left-auto sm:right-6 sm:w-auto z-40 animate-slide-up">
           <Link
             href="/cart"
-            className="flex items-center justify-between gap-4 bg-campus-500 text-white px-6 py-4 rounded-2xl shadow-2xl hover:shadow-glow transition-all hover:scale-[1.02]"
+            className="flex items-center justify-between gap-4 bg-zayko-500 text-white px-6 py-4 rounded-2xl shadow-2xl hover:shadow-glow transition-all hover:scale-[1.02]"
           >
             <div className="flex items-center gap-3">
               <span className="bg-white/20 w-10 h-10 rounded-xl flex items-center justify-center text-lg">
@@ -210,7 +234,7 @@ export default function MenuPage() {
               </span>
               <div>
                 <p className="font-bold">{itemCount} item{itemCount > 1 ? "s" : ""}</p>
-                <p className="text-xs text-campus-200">View your cart</p>
+                <p className="text-xs text-zayko-200">View your cart</p>
               </div>
             </div>
             <span className="font-display font-bold text-lg text-gold-300">₹{total}</span>

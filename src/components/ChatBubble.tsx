@@ -16,8 +16,8 @@ export default function ChatBubble({ role, content, timestamp }: ChatBubbleProps
                 {/* Avatar */}
                 <div
                     className={`w-8 h-8 rounded-full flex items-center justify-center text-sm flex-shrink-0 ${isUser
-                            ? "bg-campus-500 text-white"
-                            : "bg-gradient-to-br from-gold-400 to-gold-500 text-campus-900"
+                            ? "bg-zayko-500 text-white"
+                            : "bg-gradient-to-br from-gold-400 to-gold-500 text-zayko-900"
                         }`}
                 >
                     {isUser ? "👤" : "🤖"}
@@ -26,13 +26,13 @@ export default function ChatBubble({ role, content, timestamp }: ChatBubbleProps
                 {/* Message */}
                 <div
                     className={`px-4 py-3 rounded-2xl ${isUser
-                            ? "bg-campus-500 text-white rounded-br-md"
+                            ? "bg-zayko-500 text-white rounded-br-md"
                             : "bg-white border border-gray-100 text-gray-800 rounded-bl-md shadow-sm"
                         }`}
                 >
                     <p className="text-sm whitespace-pre-wrap leading-relaxed">{content}</p>
                     {timestamp && (
-                        <p className={`text-xs mt-1 ${isUser ? "text-campus-200" : "text-gray-400"}`}>
+                        <p className={`text-xs mt-1 ${isUser ? "text-zayko-200" : "text-gray-400"}`}>
                             {timestamp}
                         </p>
                     )}

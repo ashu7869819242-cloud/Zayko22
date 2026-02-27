@@ -100,28 +100,28 @@ export default function AuthPage() {
     if (loading) {
         return (
             <div className="min-h-screen flex items-center justify-center">
-                <div className="w-12 h-12 border-4 border-campus-500 border-t-transparent rounded-full animate-spin"></div>
+                <div className="w-12 h-12 border-4 border-zayko-500 border-t-transparent rounded-full animate-spin"></div>
             </div>
         );
     }
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-campus-500 via-campus-600 to-campus-800 flex items-center justify-center p-4">
+        <div className="min-h-screen bg-gradient-to-br from-zayko-500 via-zayko-600 to-zayko-800 flex items-center justify-center p-4">
             <div className="w-full max-w-md">
                 {/* Header */}
                 <div className="text-center mb-8 animate-fade-in">
                     <div className="w-20 h-20 bg-white/10 backdrop-blur-xl rounded-2xl flex items-center justify-center mx-auto mb-4 text-4xl">
-                        🎓
+                        ⚡
                     </div>
-                    <h1 className="text-3xl font-display font-bold text-white">Campus Canteen</h1>
-                    <p className="text-campus-200 mt-1">Smart Ordering System</p>
+                    <h1 className="text-3xl font-display font-bold text-white">Zayko</h1>
+                    <p className="text-zayko-200 mt-1">Order Smart. Eat Fresh.</p>
                 </div>
 
                 {/* Card */}
                 <div className="bg-white/95 backdrop-blur-xl rounded-3xl shadow-2xl p-8 animate-slide-up">
                     {step === "login" && (
                         <>
-                            <h2 className="text-xl font-display font-bold text-campus-700 mb-1">Welcome! 👋</h2>
+                            <h2 className="text-xl font-display font-bold text-zayko-700 mb-1">Welcome! 👋</h2>
                             <p className="text-gray-500 text-sm mb-6">Sign in with your Google account to get started</p>
 
                             <div className="space-y-4">
@@ -132,7 +132,7 @@ export default function AuthPage() {
                                 >
                                     {sending ? (
                                         <>
-                                            <div className="w-5 h-5 border-2 border-campus-500 border-t-transparent rounded-full animate-spin"></div>
+                                            <div className="w-5 h-5 border-2 border-zayko-500 border-t-transparent rounded-full animate-spin"></div>
                                             Signing in...
                                         </>
                                     ) : (
@@ -153,7 +153,7 @@ export default function AuthPage() {
 
                     {step === "profile" && (
                         <>
-                            <h2 className="text-xl font-display font-bold text-campus-700 mb-1">Complete Profile 📝</h2>
+                            <h2 className="text-xl font-display font-bold text-zayko-700 mb-1">Complete Profile 📝</h2>
                             <p className="text-gray-500 text-sm mb-6">Tell us about yourself</p>
 
                             <div className="space-y-4">
@@ -197,7 +197,7 @@ export default function AuthPage() {
                     )}
                 </div>
 
-                <p className="text-center text-campus-300 text-xs mt-6">
+                <p className="text-center text-zayko-300 text-xs mt-6">
                     Secured with Firebase Authentication
                 </p>
             </div>

@@ -30,7 +30,7 @@ export async function POST(req: NextRequest) {
     try {
         const { messages, cart, userProfile, action } = await req.json();
 
-        // SECURITY: SAITM-format order ID (replaces UUID-based ID)
+        // SECURITY: Zayko-format order ID (replaces UUID-based ID)
         const generateId = () => generateOrderId();
 
         // Fetch canteen status for AI context
@@ -59,7 +59,7 @@ export async function POST(req: NextRequest) {
             ? `\n\nCANTEEN STATUS: OPEN (Timing: ${canteenTiming})`
             : `\n\nCANTEEN STATUS: CLOSED (Timing: ${canteenTiming})\nIMPORTANT: Canteen is currently closed. Do NOT suggest any food items. Respond to any food/order request with: "Canteen abhi band hai 😔 Timing: ${canteenTiming}"`;
 
-        let systemPrompt = `You are the official AI Assistant of a College Canteen Ordering System.
+        let systemPrompt = `You are the official AI Assistant of Zayko – a Smart Food Ordering Platform.
 
 Your job is ONLY to assist users with canteen-related tasks.
 
@@ -150,7 +150,7 @@ Yeh raha aapka order summary 👇
 🍔 Burger ×2
 ☕ Chai ×1
 Total: ₹80
-Order ID: SAITM4F7X
+Order ID: ZKO4F7X
 
 Confirm karein?"
 

@@ -51,7 +51,7 @@ export default function InvoiceModal({ order, onClose }: InvoiceModalProps) {
                     <div className="flex gap-3">
                         <button
                             onClick={handlePrint}
-                            className="px-5 py-2.5 bg-campus-500 text-white rounded-xl font-semibold text-sm hover:bg-campus-600 transition-all flex items-center gap-2"
+                            className="px-5 py-2.5 bg-zayko-500 text-white rounded-xl font-semibold text-sm hover:bg-zayko-600 transition-all flex items-center gap-2"
                         >
                             🖨️ Print Invoice
                         </button>
@@ -68,8 +68,8 @@ export default function InvoiceModal({ order, onClose }: InvoiceModalProps) {
                 <div className="invoice-print-area p-8 sm:p-12" style={{ fontFamily: "'Inter', sans-serif" }}>
                     {/* Header */}
                     <div className="text-center mb-8 pb-6 border-b-2 border-gray-800">
-                        <h1 className="text-2xl font-bold text-gray-900 tracking-wide">SAITM Campus Canteen</h1>
-                        <p className="text-sm text-gray-600 mt-1 font-medium">Smart Ordering System</p>
+                        <h1 className="text-2xl font-bold text-gray-900 tracking-wide">Zayko</h1>
+                        <p className="text-sm text-gray-600 mt-1 font-medium">Order Smart. Eat Fresh.</p>
                         <p className="text-xs text-gray-400 mt-2">Tax Invoice / Receipt</p>
                     </div>
 
@@ -172,7 +172,7 @@ export default function InvoiceModal({ order, onClose }: InvoiceModalProps) {
                     {/* Footer */}
                     <div className="text-center pt-6 border-t border-gray-300">
                         <p className="text-xs text-gray-400 italic">This is a computer-generated invoice and does not require a signature.</p>
-                        <p className="text-xs text-gray-400 mt-1">SAITM Campus Canteen • Smart Ordering System</p>
+                        <p className="text-xs text-gray-400 mt-1">Zayko • Order Smart. Eat Fresh.</p>
                     </div>
                 </div>
             </div>

@@ -11,7 +11,7 @@ export default function ChatPage() {
         <Suspense
             fallback={
                 <div className="min-h-screen flex items-center justify-center">
-                    <div className="w-12 h-12 border-4 border-campus-500 border-t-transparent rounded-full animate-spin"></div>
+                    <div className="w-12 h-12 border-4 border-zayko-500 border-t-transparent rounded-full animate-spin"></div>
                 </div>
             }
         >
@@ -197,7 +197,7 @@ function ChatPageInner() {
     if (loading) {
         return (
             <div className="min-h-screen flex items-center justify-center">
-                <div className="w-12 h-12 border-4 border-campus-500 border-t-transparent rounded-full animate-spin"></div>
+                <div className="w-12 h-12 border-4 border-zayko-500 border-t-transparent rounded-full animate-spin"></div>
             </div>
         );
     }
@@ -211,7 +211,7 @@ function ChatPageInner() {
                         🤖
                     </div>
                     <div>
-                        <h2 className="font-display font-bold text-campus-700">Campus Bot</h2>
+                        <h2 className="font-display font-bold text-zayko-700">Campus Bot</h2>
                         <p className="text-xs text-emerald-500 flex items-center gap-1">
                             <span className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span>
                             Online • AI-powered ordering
@@ -241,7 +241,7 @@ function ChatPageInner() {
                                     <button
                                         key={q}
                                         onClick={() => { setInput(q); }}
-                                        className="px-4 py-2 bg-campus-50 text-campus-600 rounded-xl text-sm hover:bg-campus-100 transition-colors"
+                                        className="px-4 py-2 bg-zayko-50 text-zayko-600 rounded-xl text-sm hover:bg-zayko-100 transition-colors"
                                     >
                                         {q}
                                     </button>

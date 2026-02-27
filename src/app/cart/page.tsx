@@ -19,7 +19,7 @@ export default function CartPage() {
     if (loading) {
         return (
             <div className="min-h-screen flex items-center justify-center">
-                <div className="w-12 h-12 border-4 border-campus-500 border-t-transparent rounded-full animate-spin"></div>
+                <div className="w-12 h-12 border-4 border-zayko-500 border-t-transparent rounded-full animate-spin"></div>
             </div>
         );
     }
@@ -75,13 +75,13 @@ export default function CartPage() {
                         {items.map((item) => (
                             <div key={item.id} className="glass-card p-4 sm:p-5 flex items-center gap-4">
                                 {/* Item Icon */}
-                                <div className="w-14 h-14 rounded-xl bg-campus-50 flex items-center justify-center text-2xl flex-shrink-0">
+                                <div className="w-14 h-14 rounded-xl bg-zayko-50 flex items-center justify-center text-2xl flex-shrink-0">
                                     {item.category === "beverages" ? "☕" : item.category === "snacks" ? "🍿" : item.category === "meals" ? "🍱" : "🍽️"}
                                 </div>
 
                                 {/* Item Details */}
                                 <div className="flex-1 min-w-0">
-                                    <h3 className="font-semibold text-campus-700 truncate">{item.name}</h3>
+                                    <h3 className="font-semibold text-zayko-700 truncate">{item.name}</h3>
                                     <p className="text-sm text-gray-500">₹{item.price} each</p>
                                 </div>
 
@@ -93,13 +93,13 @@ export default function CartPage() {
                                     >
                                         −
                                     </button>
-                                    <span className="w-8 text-center font-semibold text-campus-700">
+                                    <span className="w-8 text-center font-semibold text-zayko-700">
                                         {item.quantity}
                                     </span>
                                     <button
                                         onClick={() => updateQuantity(item.id, item.quantity + 1)}
                                         disabled={item.quantity >= item.maxQuantity}
-                                        className="w-8 h-8 rounded-lg bg-campus-500 hover:bg-campus-600 text-white flex items-center justify-center font-bold transition-colors disabled:opacity-50"
+                                        className="w-8 h-8 rounded-lg bg-zayko-500 hover:bg-zayko-600 text-white flex items-center justify-center font-bold transition-colors disabled:opacity-50"
                                     >
                                         +
                                     </button>
@@ -120,7 +120,7 @@ export default function CartPage() {
 
                         {/* Order Summary */}
                         <div className="glass-card p-6 mt-6">
-                            <h3 className="font-display font-bold text-lg text-campus-700 mb-4">Order Summary</h3>
+                            <h3 className="font-display font-bold text-lg text-zayko-700 mb-4">Order Summary</h3>
 
                             <div className="space-y-3 text-sm">
                                 <div className="flex justify-between text-gray-600">
@@ -132,16 +132,16 @@ export default function CartPage() {
                                     <span className="text-teal-600">Free ✨</span>
                                 </div>
                                 <div className="border-t border-gray-100 pt-3 flex justify-between items-center">
-                                    <span className="font-display font-bold text-lg text-campus-700">Total</span>
+                                    <span className="font-display font-bold text-lg text-zayko-700">Total</span>
                                     <span className="font-display font-bold text-2xl text-teal-600">₹{total}</span>
                                 </div>
                             </div>
 
                             {/* Wallet Info */}
-                            <div className="mt-4 p-3 rounded-xl bg-campus-50 flex items-center justify-between text-sm">
+                            <div className="mt-4 p-3 rounded-xl bg-zayko-50 flex items-center justify-between text-sm">
                                 <div className="flex items-center gap-2">
                                     <span>💰</span>
-                                    <span className="text-campus-600">Wallet Balance</span>
+                                    <span className="text-zayko-600">Wallet Balance</span>
                                 </div>
                                 <span className={`font-bold ${(profile?.walletBalance || 0) >= total ? "text-teal-600" : "text-red-500"}`}>
                                     ₹{profile?.walletBalance || 0}
@@ -151,7 +151,7 @@ export default function CartPage() {
                             {(profile?.walletBalance || 0) < total && (
                                 <Link
                                     href="/wallet"
-                                    className="block w-full text-center mt-3 text-sm text-campus-500 hover:underline"
+                                    className="block w-full text-center mt-3 text-sm text-zayko-500 hover:underline"
                                 >
                                     ⚠️ Insufficient balance. Top up your wallet →
                                 </Link>

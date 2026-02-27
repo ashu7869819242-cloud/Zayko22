@@ -1,8 +1,8 @@
 /**
- * Order ID Utility — Generates unique SAITM-format order IDs.
+ * Order ID Utility — Generates unique Zayko-format order IDs.
  *
- * Format: SAITM + 4 alphanumeric characters (at least 1 letter + 1 digit)
- * Examples: SAITM4F7X, SAITM9K2Q
+ * Format: ZKO + 4 alphanumeric characters (at least 1 letter + 1 digit)
+ * Examples: ZKO4F7X, ZKO9K2Q
  */
 
 const LETTERS = "ABCDEFGHJKLMNPQRSTUVWXYZ"; // no I, O to avoid confusion
@@ -14,7 +14,7 @@ function randomChar(pool: string): string {
 }
 
 /**
- * Generate a SAITM-format order ID.
+ * Generate a Zayko-format order ID.
  * Guarantees at least 1 letter and 1 digit in the 4-char suffix.
  */
 export function generateOrderId(): string {
@@ -33,5 +33,6 @@ export function generateOrderId(): string {
         [chars[i], chars[j]] = [chars[j], chars[i]];
     }
 
-    return `SAITM${chars.join("")}`;
+    return `ZKO${chars.join("")}`;
 }
+

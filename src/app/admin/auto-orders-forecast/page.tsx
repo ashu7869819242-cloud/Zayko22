@@ -201,15 +201,15 @@ export default function AutoOrdersForecastPage() {
 
     return (
         <AdminGuard>
-            <div className="min-h-screen bg-campus-900">
+            <div className="min-h-screen bg-zayko-900">
                 {/* Header */}
-                <div className="bg-campus-800 border-b border-campus-700 px-6 py-4">
+                <div className="bg-zayko-800 border-b border-zayko-700 px-6 py-4">
                     <div className="max-w-7xl mx-auto flex items-center justify-between">
                         <div className="flex items-center gap-3">
                             <div className="w-10 h-10 rounded-xl bg-amber-500/20 flex items-center justify-center text-xl">📊</div>
                             <div>
                                 <h1 className="text-lg font-display font-bold text-white">Auto-Order Forecast</h1>
-                                <p className="text-xs text-campus-400">Inventory demand forecasting</p>
+                                <p className="text-xs text-zayko-400">Inventory demand forecasting</p>
                             </div>
                         </div>
                         <div className="flex items-center gap-3">
@@ -245,43 +245,43 @@ export default function AutoOrdersForecastPage() {
                         <div className="text-center py-20 animate-fade-in">
                             <div className="text-6xl mb-4">📭</div>
                             <h2 className="text-xl font-display font-bold text-white mb-2">No Active Auto Orders</h2>
-                            <p className="text-campus-400">There are no active auto-orders to forecast. Users need to create recurring orders first.</p>
+                            <p className="text-zayko-400">There are no active auto-orders to forecast. Users need to create recurring orders first.</p>
                         </div>
                     ) : (
                         <div className="space-y-8 animate-fade-in">
                             {/* ── Summary Cards ── */}
                             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                                <div className="bg-campus-800/50 border border-campus-700 rounded-2xl p-5">
+                                <div className="bg-zayko-800/50 border border-zayko-700 rounded-2xl p-5">
                                     <div className="flex items-center gap-2 mb-2">
                                         <span className="text-lg">🔄</span>
-                                        <span className="text-xs text-campus-400 font-semibold">Active Auto Orders</span>
+                                        <span className="text-xs text-zayko-400 font-semibold">Active Auto Orders</span>
                                     </div>
                                     <p className="text-3xl font-display font-bold text-blue-400">{data.summary.totalActiveOrders}</p>
                                 </div>
 
-                                <div className="bg-campus-800/50 border border-campus-700 rounded-2xl p-5">
+                                <div className="bg-zayko-800/50 border border-zayko-700 rounded-2xl p-5">
                                     <div className="flex items-center gap-2 mb-2">
                                         <span className="text-lg">📦</span>
-                                        <span className="text-xs text-campus-400 font-semibold">Top Daily Demand</span>
+                                        <span className="text-xs text-zayko-400 font-semibold">Top Daily Demand</span>
                                     </div>
                                     {data.summary.dailyDemandByItem.length > 0 ? (
                                         <div className="space-y-1">
                                             {data.summary.dailyDemandByItem.slice(0, 3).map((item) => (
                                                 <div key={item.itemId || item.itemName} className="flex items-center justify-between">
-                                                    <span className="text-sm text-campus-300 truncate">{item.itemName}</span>
+                                                    <span className="text-sm text-zayko-300 truncate">{item.itemName}</span>
                                                     <span className="text-sm font-bold text-gold-400">{item.totalDaily} units</span>
                                                 </div>
                                             ))}
                                         </div>
                                     ) : (
-                                        <p className="text-campus-500 text-sm">No demand data</p>
+                                        <p className="text-zayko-500 text-sm">No demand data</p>
                                     )}
                                 </div>
 
-                                <div className={`border rounded-2xl p-5 ${data.summary.itemsAtRisk > 0 ? "bg-red-900/30 border-red-700/50" : "bg-campus-800/50 border-campus-700"}`}>
+                                <div className={`border rounded-2xl p-5 ${data.summary.itemsAtRisk > 0 ? "bg-red-900/30 border-red-700/50" : "bg-zayko-800/50 border-zayko-700"}`}>
                                     <div className="flex items-center gap-2 mb-2">
                                         <span className="text-lg">{data.summary.itemsAtRisk > 0 ? "🚨" : "✅"}</span>
-                                        <span className="text-xs text-campus-400 font-semibold">Items at Risk</span>
+                                        <span className="text-xs text-zayko-400 font-semibold">Items at Risk</span>
                                     </div>
                                     <p className={`text-3xl font-display font-bold ${data.summary.itemsAtRisk > 0 ? "text-red-400" : "text-emerald-400"}`}>
                                         {data.summary.itemsAtRisk}
@@ -293,14 +293,14 @@ export default function AutoOrdersForecastPage() {
                             </div>
 
                             {/* ── Filters ── */}
-                            <div className="bg-campus-800/50 border border-campus-700 rounded-2xl p-4">
+                            <div className="bg-zayko-800/50 border border-zayko-700 rounded-2xl p-4">
                                 <div className="flex flex-wrap items-center gap-4">
                                     <div className="flex items-center gap-2">
-                                        <label className="text-xs text-campus-400 font-semibold">Item:</label>
+                                        <label className="text-xs text-zayko-400 font-semibold">Item:</label>
                                         <select
                                             value={filterItem}
                                             onChange={(e) => setFilterItem(e.target.value)}
-                                            className="bg-campus-700 border border-campus-600 text-white text-sm rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-gold-400"
+                                            className="bg-zayko-700 border border-zayko-600 text-white text-sm rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-gold-400"
                                         >
                                             <option value="all">All Items</option>
                                             {itemOptions.map((opt) => (
@@ -310,11 +310,11 @@ export default function AutoOrdersForecastPage() {
                                     </div>
 
                                     <div className="flex items-center gap-2">
-                                        <label className="text-xs text-campus-400 font-semibold">Day:</label>
+                                        <label className="text-xs text-zayko-400 font-semibold">Day:</label>
                                         <select
                                             value={filterDay}
                                             onChange={(e) => setFilterDay(e.target.value)}
-                                            className="bg-campus-700 border border-campus-600 text-white text-sm rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-gold-400"
+                                            className="bg-zayko-700 border border-zayko-600 text-white text-sm rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-gold-400"
                                         >
                                             <option value="all">All Days</option>
                                             {(["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"] as DayOfWeek[]).map((d) => (
@@ -328,16 +328,16 @@ export default function AutoOrdersForecastPage() {
                                             type="checkbox"
                                             checked={riskOnly}
                                             onChange={(e) => setRiskOnly(e.target.checked)}
-                                            className="w-4 h-4 rounded border-campus-600 text-red-500 focus:ring-red-400 bg-campus-700"
+                                            className="w-4 h-4 rounded border-zayko-600 text-red-500 focus:ring-red-400 bg-zayko-700"
                                         />
-                                        <span className="text-xs text-campus-400 font-semibold">Show Only Shortage Risk</span>
+                                        <span className="text-xs text-zayko-400 font-semibold">Show Only Shortage Risk</span>
                                     </label>
                                 </div>
                             </div>
 
                             {/* ── Active Auto-Orders Table ── */}
-                            <div className="bg-campus-800/50 border border-campus-700 rounded-2xl overflow-hidden animate-slide-up">
-                                <div className="px-6 py-4 border-b border-campus-700">
+                            <div className="bg-zayko-800/50 border border-zayko-700 rounded-2xl overflow-hidden animate-slide-up">
+                                <div className="px-6 py-4 border-b border-zayko-700">
                                     <h2 className="text-lg font-display font-bold text-white flex items-center gap-2">
                                         🔄 Active Auto-Orders
                                         <span className="text-xs bg-blue-500/20 text-blue-300 px-2 py-0.5 rounded-full font-semibold">{filteredOrders.length}</span>
@@ -346,28 +346,28 @@ export default function AutoOrdersForecastPage() {
                                 <div className="overflow-x-auto">
                                     <table className="w-full text-sm">
                                         <thead>
-                                            <tr className="border-b border-campus-700">
-                                                <th className="text-left px-6 py-3 text-xs font-semibold text-campus-400 uppercase">User</th>
-                                                <th className="text-left px-6 py-3 text-xs font-semibold text-campus-400 uppercase">User ID</th>
-                                                <th className="text-left px-6 py-3 text-xs font-semibold text-campus-400 uppercase">Item</th>
-                                                <th className="text-center px-6 py-3 text-xs font-semibold text-campus-400 uppercase">Qty</th>
-                                                <th className="text-center px-6 py-3 text-xs font-semibold text-campus-400 uppercase">Time</th>
-                                                <th className="text-center px-6 py-3 text-xs font-semibold text-campus-400 uppercase">Days</th>
-                                                <th className="text-center px-6 py-3 text-xs font-semibold text-campus-400 uppercase">Status</th>
+                                            <tr className="border-b border-zayko-700">
+                                                <th className="text-left px-6 py-3 text-xs font-semibold text-zayko-400 uppercase">User</th>
+                                                <th className="text-left px-6 py-3 text-xs font-semibold text-zayko-400 uppercase">User ID</th>
+                                                <th className="text-left px-6 py-3 text-xs font-semibold text-zayko-400 uppercase">Item</th>
+                                                <th className="text-center px-6 py-3 text-xs font-semibold text-zayko-400 uppercase">Qty</th>
+                                                <th className="text-center px-6 py-3 text-xs font-semibold text-zayko-400 uppercase">Time</th>
+                                                <th className="text-center px-6 py-3 text-xs font-semibold text-zayko-400 uppercase">Days</th>
+                                                <th className="text-center px-6 py-3 text-xs font-semibold text-zayko-400 uppercase">Status</th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             {filteredOrders.map((order) => (
-                                                <tr key={order.id} className="border-b border-campus-700/50 hover:bg-campus-700/30 transition-colors">
+                                                <tr key={order.id} className="border-b border-zayko-700/50 hover:bg-zayko-700/30 transition-colors">
                                                     <td className="px-6 py-3 text-white font-medium">{order.userName}</td>
-                                                    <td className="px-6 py-3 text-campus-400 font-mono text-xs">{order.userId.slice(0, 8)}…</td>
-                                                    <td className="px-6 py-3 text-campus-300">{order.itemName}</td>
+                                                    <td className="px-6 py-3 text-zayko-400 font-mono text-xs">{order.userId.slice(0, 8)}…</td>
+                                                    <td className="px-6 py-3 text-zayko-300">{order.itemName}</td>
                                                     <td className="px-6 py-3 text-center text-white font-bold">{order.quantity}</td>
                                                     <td className="px-6 py-3 text-center text-gold-400 font-medium">{formatTime12(order.time)}</td>
                                                     <td className="px-6 py-3 text-center">
                                                         <div className="flex flex-wrap justify-center gap-1">
                                                             {order.scheduledDays.map((d) => (
-                                                                <span key={d} className="text-xs bg-campus-600 text-campus-200 px-1.5 py-0.5 rounded">{d}</span>
+                                                                <span key={d} className="text-xs bg-zayko-600 text-zayko-200 px-1.5 py-0.5 rounded">{d}</span>
                                                             ))}
                                                         </div>
                                                     </td>
@@ -384,45 +384,45 @@ export default function AutoOrdersForecastPage() {
                             </div>
 
                             {/* ── Aggregate Demand Summary ── */}
-                            <div className="bg-campus-800/50 border border-campus-700 rounded-2xl overflow-hidden animate-slide-up">
-                                <div className="px-6 py-4 border-b border-campus-700">
+                            <div className="bg-zayko-800/50 border border-zayko-700 rounded-2xl overflow-hidden animate-slide-up">
+                                <div className="px-6 py-4 border-b border-zayko-700">
                                     <h2 className="text-lg font-display font-bold text-white flex items-center gap-2">
                                         📦 Aggregate Demand per Item per Day
                                     </h2>
                                 </div>
                                 <div className="p-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                                     {filteredDemand.map((entry, i) => (
-                                        <div key={`${entry.itemId}-${entry.day}-${i}`} className="bg-campus-700/40 rounded-xl px-4 py-3 flex items-center justify-between">
+                                        <div key={`${entry.itemId}-${entry.day}-${i}`} className="bg-zayko-700/40 rounded-xl px-4 py-3 flex items-center justify-between">
                                             <div>
                                                 <p className="text-sm font-semibold text-white">{entry.itemName}</p>
-                                                <p className="text-xs text-campus-400">{entry.day}</p>
+                                                <p className="text-xs text-zayko-400">{entry.day}</p>
                                             </div>
                                             <div className="text-right">
                                                 <p className="text-lg font-bold text-gold-400">{entry.totalQuantity}</p>
-                                                <p className="text-xs text-campus-500">units</p>
+                                                <p className="text-xs text-zayko-500">units</p>
                                             </div>
                                         </div>
                                     ))}
                                     {filteredDemand.length === 0 && (
-                                        <p className="text-campus-500 col-span-full text-center py-4">No demand data for selected filters</p>
+                                        <p className="text-zayko-500 col-span-full text-center py-4">No demand data for selected filters</p>
                                     )}
                                 </div>
                             </div>
 
                             {/* ── 7-Day Forecast ── */}
-                            <div className="bg-campus-800/50 border border-campus-700 rounded-2xl overflow-hidden animate-slide-up">
-                                <div className="px-6 py-4 border-b border-campus-700">
+                            <div className="bg-zayko-800/50 border border-zayko-700 rounded-2xl overflow-hidden animate-slide-up">
+                                <div className="px-6 py-4 border-b border-zayko-700">
                                     <h2 className="text-lg font-display font-bold text-white flex items-center gap-2">
                                         📅 7-Day Stock Forecast
                                     </h2>
-                                    <p className="text-xs text-campus-400 mt-1">Cumulative demand vs current stock — items turning red indicate shortage risk</p>
+                                    <p className="text-xs text-zayko-400 mt-1">Cumulative demand vs current stock — items turning red indicate shortage risk</p>
                                 </div>
 
                                 {filteredForecast.map((day) => (
-                                    <div key={day.date} className="border-b border-campus-700/50 last:border-b-0">
-                                        <div className="px-6 py-3 bg-campus-700/20 flex items-center gap-3">
+                                    <div key={day.date} className="border-b border-zayko-700/50 last:border-b-0">
+                                        <div className="px-6 py-3 bg-zayko-700/20 flex items-center gap-3">
                                             <span className="text-sm font-bold text-white">{formatDate(day.date)}</span>
-                                            <span className="text-xs bg-campus-600 text-campus-300 px-2 py-0.5 rounded-full font-semibold">{day.dayName}</span>
+                                            <span className="text-xs bg-zayko-600 text-zayko-300 px-2 py-0.5 rounded-full font-semibold">{day.dayName}</span>
                                             {day.items.some(i => i.risk) && (
                                                 <span className="text-xs bg-red-500/20 text-red-400 px-2 py-0.5 rounded-full font-bold animate-pulse">⚠️ Shortage Risk</span>
                                             )}
@@ -433,20 +433,20 @@ export default function AutoOrdersForecastPage() {
                                                 <table className="w-full text-sm">
                                                     <thead>
                                                         <tr>
-                                                            <th className="text-left px-6 py-2 text-xs font-semibold text-campus-500">Item</th>
-                                                            <th className="text-center px-4 py-2 text-xs font-semibold text-campus-500">Today&apos;s Demand</th>
-                                                            <th className="text-center px-4 py-2 text-xs font-semibold text-campus-500">Current Stock</th>
-                                                            <th className="text-center px-4 py-2 text-xs font-semibold text-campus-500">Cumulative Demand</th>
-                                                            <th className="text-center px-4 py-2 text-xs font-semibold text-campus-500">Remaining</th>
-                                                            <th className="text-center px-4 py-2 text-xs font-semibold text-campus-500">Status</th>
+                                                            <th className="text-left px-6 py-2 text-xs font-semibold text-zayko-500">Item</th>
+                                                            <th className="text-center px-4 py-2 text-xs font-semibold text-zayko-500">Today&apos;s Demand</th>
+                                                            <th className="text-center px-4 py-2 text-xs font-semibold text-zayko-500">Current Stock</th>
+                                                            <th className="text-center px-4 py-2 text-xs font-semibold text-zayko-500">Cumulative Demand</th>
+                                                            <th className="text-center px-4 py-2 text-xs font-semibold text-zayko-500">Remaining</th>
+                                                            <th className="text-center px-4 py-2 text-xs font-semibold text-zayko-500">Status</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
                                                         {day.items.map((item) => (
-                                                            <tr key={item.itemId} className={`border-t border-campus-700/30 ${item.risk ? "bg-red-900/20" : ""}`}>
+                                                            <tr key={item.itemId} className={`border-t border-zayko-700/30 ${item.risk ? "bg-red-900/20" : ""}`}>
                                                                 <td className="px-6 py-2.5 text-white font-medium">{item.itemName}</td>
-                                                                <td className="px-4 py-2.5 text-center text-campus-300">{item.demand}</td>
-                                                                <td className="px-4 py-2.5 text-center text-campus-300">{item.currentStock}</td>
+                                                                <td className="px-4 py-2.5 text-center text-zayko-300">{item.demand}</td>
+                                                                <td className="px-4 py-2.5 text-center text-zayko-300">{item.currentStock}</td>
                                                                 <td className="px-4 py-2.5 text-center text-amber-400 font-semibold">{item.cumulativeDemand}</td>
                                                                 <td className={`px-4 py-2.5 text-center font-bold ${item.remaining < 0 ? "text-red-400" : "text-emerald-400"}`}>
                                                                     {item.remaining}
@@ -468,7 +468,7 @@ export default function AutoOrdersForecastPage() {
                                                 </table>
                                             </div>
                                         ) : (
-                                            <div className="px-6 py-4 text-campus-500 text-sm">
+                                            <div className="px-6 py-4 text-zayko-500 text-sm">
                                                 {riskOnly ? "No shortage risks on this day" : "No auto-order demand on this day"}
                                             </div>
                                         )}
@@ -476,7 +476,7 @@ export default function AutoOrdersForecastPage() {
                                 ))}
 
                                 {filteredForecast.length === 0 && (
-                                    <div className="px-6 py-8 text-center text-campus-500">
+                                    <div className="px-6 py-8 text-center text-zayko-500">
                                         No forecast data matches your filters
                                     </div>
                                 )}

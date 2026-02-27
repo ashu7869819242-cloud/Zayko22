@@ -97,31 +97,33 @@ export default function AdminDashboard() {
 
     return (
         <AdminGuard>
-            <div className="min-h-screen bg-campus-900">
-                {/* Header */}
-                <div className="bg-campus-800 border-b border-campus-700 px-6 py-4">
-                    <div className="max-w-7xl mx-auto flex items-center justify-between">
+            <div className="min-h-screen bg-zayko-900 pb-12">
+                {/* ─── Header & Nav ─── */}
+                <div className="bg-zayko-800 border-b border-zayko-700 px-6 py-4">
+                    <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                         <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 rounded-xl bg-gold-500/20 flex items-center justify-center text-xl">🎓</div>
+                            <div className="w-10 h-10 rounded-xl bg-gold-500/20 flex items-center justify-center text-xl">⚡</div>
                             <div>
                                 <h1 className="text-lg font-display font-bold text-white">Admin Dashboard</h1>
-                                <p className="text-xs text-campus-400">Campus Canteen Management</p>
+                                <p className="text-xs text-zayko-400">Zayko Management</p>
                             </div>
                         </div>
-                        <div className="flex items-center gap-3">
-                            {adminLinks.map((link) => (
-                                <Link
-                                    key={link.href}
-                                    href={link.href}
-                                    className="hidden sm:flex items-center gap-2 px-4 py-2 bg-white/5 hover:bg-white/10 text-white text-sm rounded-xl transition-all"
-                                >
-                                    <span>{link.icon}</span>
-                                    <span>{link.label}</span>
-                                </Link>
-                            ))}
+                        <div className="flex items-center gap-2 overflow-x-auto pb-2 sm:pb-0 w-full sm:w-auto scrollbar-hide">
+                            <Link href="/admin/orders" className="flex items-center gap-2 px-4 py-2 bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 text-sm rounded-xl transition-all whitespace-nowrap">
+                                📋 Orders
+                            </Link>
+                            <Link href="/admin/menu" className="flex items-center gap-2 px-4 py-2 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 text-sm rounded-xl transition-all whitespace-nowrap">
+                                🍔 Menu
+                            </Link>
+                            <Link href="/admin/wallet" className="flex items-center gap-2 px-4 py-2 bg-purple-500/10 hover:bg-purple-500/20 text-purple-400 text-sm rounded-xl transition-all whitespace-nowrap">
+                                💰 Wallet
+                            </Link>
+                            <Link href="/admin/settings" className="flex items-center gap-2 px-4 py-2 bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 text-sm rounded-xl transition-all whitespace-nowrap">
+                                ⚙️ Settings
+                            </Link>
                             <button
                                 onClick={() => { localStorage.removeItem("adminToken"); window.location.href = "/admin"; }}
-                                className="px-3 py-2 text-sm text-red-400 hover:bg-red-500/10 rounded-xl transition-all"
+                                className="px-3 py-2 text-sm text-red-400 hover:bg-red-500/10 rounded-xl transition-all ml-auto sm:ml-2 whitespace-nowrap"
                             >
                                 Logout
                             </button>
@@ -130,20 +132,6 @@ export default function AdminDashboard() {
                 </div>
 
                 <div className="max-w-7xl mx-auto p-6">
-                    {/* Mobile Nav */}
-                    <div className="sm:hidden flex gap-2 mb-6">
-                        {adminLinks.map((link) => (
-                            <Link
-                                key={link.href}
-                                href={link.href}
-                                className={`flex-1 flex items-center justify-center gap-2 py-3 bg-gradient-to-r ${link.color} text-white rounded-xl text-sm font-semibold`}
-                            >
-                                <span>{link.icon}</span>
-                                <span>{link.label}</span>
-                            </Link>
-                        ))}
-                    </div>
-
                     {loading ? (
                         <div className="flex items-center justify-center py-20">
                             <div className="w-12 h-12 border-4 border-gold-400 border-t-transparent rounded-full animate-spin"></div>
@@ -153,8 +141,8 @@ export default function AdminDashboard() {
                             {/* Canteen Toggle + Stats Cards */}
                             <div className="grid grid-cols-2 lg:grid-cols-6 gap-4 mb-8 animate-fade-in">
                                 {/* Canteen Toggle Card */}
-                                <div className="col-span-2 lg:col-span-1 bg-campus-800/50 border border-campus-700 rounded-2xl p-4 flex flex-col items-center justify-center gap-3">
-                                    <span className="text-xs text-campus-400 font-semibold">Canteen</span>
+                                <div className="col-span-2 lg:col-span-1 bg-zayko-800/50 border border-zayko-700 rounded-2xl p-4 flex flex-col items-center justify-center gap-3">
+                                    <span className="text-xs text-zayko-400 font-semibold">Canteen</span>
                                     <button
                                         onClick={toggleCanteen}
                                         disabled={toggling}
@@ -173,10 +161,10 @@ export default function AdminDashboard() {
                                     { label: "Pending", value: stats.summary.pendingOrders, icon: "⏳", color: "text-yellow-400" },
                                     { label: "Completed", value: stats.summary.completedOrders, icon: "✅", color: "text-emerald-400" },
                                 ].map((stat) => (
-                                    <div key={stat.label} className="bg-campus-800/50 border border-campus-700 rounded-2xl p-4">
+                                    <div key={stat.label} className="bg-zayko-800/50 border border-zayko-700 rounded-2xl p-4">
                                         <div className="flex items-center gap-2 mb-2">
                                             <span className="text-lg">{stat.icon}</span>
-                                            <span className="text-xs text-campus-400">{stat.label}</span>
+                                            <span className="text-xs text-zayko-400">{stat.label}</span>
                                         </div>
                                         <p className={`text-2xl font-display font-bold ${stat.color}`}>{stat.value}</p>
                                     </div>
@@ -185,10 +173,10 @@ export default function AdminDashboard() {
 
                             {/* Avg Order Value */}
                             <div className="grid grid-cols-1 gap-4 mb-8 animate-slide-up">
-                                <div className="bg-campus-800/50 border border-campus-700 rounded-2xl p-5">
+                                <div className="bg-zayko-800/50 border border-zayko-700 rounded-2xl p-5">
                                     <div className="flex items-center gap-2 mb-2">
                                         <span className="text-lg">📊</span>
-                                        <span className="text-xs text-campus-400">Avg Order Value</span>
+                                        <span className="text-xs text-zayko-400">Avg Order Value</span>
                                     </div>
                                     <p className="text-2xl font-display font-bold text-purple-400">₹{stats.summary.averageOrderValue}</p>
                                 </div>
@@ -197,7 +185,7 @@ export default function AdminDashboard() {
                             {/* Charts Grid */}
                             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
                                 {/* Daily Revenue Chart */}
-                                <div className="bg-campus-800/50 border border-campus-700 rounded-2xl p-6 animate-slide-up">
+                                <div className="bg-zayko-800/50 border border-zayko-700 rounded-2xl p-6 animate-slide-up">
                                     <h3 className="text-lg font-display font-bold text-white mb-4">📈 Daily Revenue</h3>
                                     <ResponsiveContainer width="100%" height={300}>
                                         <BarChart data={stats.dailySales.slice(-14)}>
@@ -214,7 +202,7 @@ export default function AdminDashboard() {
                                 </div>
 
                                 {/* Daily Orders Chart */}
-                                <div className="bg-campus-800/50 border border-campus-700 rounded-2xl p-6 animate-slide-up">
+                                <div className="bg-zayko-800/50 border border-zayko-700 rounded-2xl p-6 animate-slide-up">
                                     <h3 className="text-lg font-display font-bold text-white mb-4">📊 Daily Orders</h3>
                                     <ResponsiveContainer width="100%" height={300}>
                                         <LineChart data={stats.dailySales.slice(-14)}>
@@ -230,7 +218,7 @@ export default function AdminDashboard() {
                                 </div>
 
                                 {/* Top Items Pie Chart */}
-                                <div className="bg-campus-800/50 border border-campus-700 rounded-2xl p-6 animate-slide-up">
+                                <div className="bg-zayko-800/50 border border-zayko-700 rounded-2xl p-6 animate-slide-up">
                                     <h3 className="text-lg font-display font-bold text-white mb-4">🔥 Popular Items</h3>
                                     {stats.topItems.length > 0 ? (
                                         <ResponsiveContainer width="100%" height={300}>
@@ -253,12 +241,12 @@ export default function AdminDashboard() {
                                             </PieChart>
                                         </ResponsiveContainer>
                                     ) : (
-                                        <div className="flex items-center justify-center h-[300px] text-campus-500">No data yet</div>
+                                        <div className="flex items-center justify-center h-[300px] text-zayko-500">No data yet</div>
                                     )}
                                 </div>
 
                                 {/* Monthly Revenue */}
-                                <div className="bg-campus-800/50 border border-campus-700 rounded-2xl p-6 animate-slide-up">
+                                <div className="bg-zayko-800/50 border border-zayko-700 rounded-2xl p-6 animate-slide-up">
                                     <h3 className="text-lg font-display font-bold text-white mb-4">📅 Monthly Revenue</h3>
                                     <ResponsiveContainer width="100%" height={300}>
                                         <BarChart data={stats.monthlySales}>
@@ -274,10 +262,10 @@ export default function AdminDashboard() {
                             </div>
                         </>
                     ) : (
-                        <div className="text-center py-20 text-campus-400">Failed to load stats</div>
+                        <div className="text-center py-20 text-zayko-400">Failed to load stats</div>
                     )}
                 </div>
             </div>
-        </AdminGuard>
+        </AdminGuard >
     );
 }

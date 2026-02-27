@@ -1,5 +1,5 @@
 /**
- * Shared TypeScript interfaces for the Campus Canteen application.
+ * Shared TypeScript interfaces for the Zayko application.
  * Single source of truth for all data models used across client/server.
  */
 
@@ -31,6 +31,17 @@ export interface MenuItem {
     image?: string;
     createdAt?: string;
     updatedAt?: string;
+}
+
+// ─── Categories ─────────────────────────────────
+
+export interface Category {
+    id: string;
+    name: string;       // Display name: "North Indian"
+    slug: string;       // URL-safe key: "north-indian" (stored in menuItems.category)
+    order: number;      // Sort position
+    createdAt: string;
+    updatedAt: string;
 }
 
 // ─── Orders ─────────────────────────────────────

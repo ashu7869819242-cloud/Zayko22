@@ -104,7 +104,7 @@ export default function WalletPage() {
                 key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
                 amount: orderData.amount,
                 currency: orderData.currency,
-                name: "Campus Canteen",
+                name: "Zayko",
                 description: "Wallet Top-up",
                 order_id: orderData.orderId,
                 handler: async (response: any) => {
@@ -164,7 +164,7 @@ export default function WalletPage() {
     if (loading || txnLoading) {
         return (
             <div className="min-h-screen flex items-center justify-center">
-                <div className="w-12 h-12 border-4 border-campus-500 border-t-transparent rounded-full animate-spin"></div>
+                <div className="w-12 h-12 border-4 border-zayko-500 border-t-transparent rounded-full animate-spin"></div>
             </div>
         );
     }
@@ -179,17 +179,17 @@ export default function WalletPage() {
                     <div className="absolute top-0 right-0 w-40 h-40 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/2"></div>
                     <div className="absolute bottom-0 left-0 w-32 h-32 bg-white/5 rounded-full translate-y-1/2 -translate-x-1/2"></div>
                     <div className="relative z-10">
-                        <p className="text-campus-200 text-sm font-medium">Wallet Balance</p>
+                        <p className="text-zayko-200 text-sm font-medium">Wallet Balance</p>
                         <h2 className="text-4xl sm:text-5xl font-display font-bold mt-2">
                             ₹{balance.toLocaleString()}
                         </h2>
-                        <div className="flex items-center gap-2 text-campus-300 text-sm mt-2">
+                        <div className="flex items-center gap-2 text-zayko-300 text-sm mt-2">
                             <span className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></span>
                             {profile?.name} • {profile?.rollNumber}
                         </div>
                         {profile?.uniqueCode && (
                             <div className="mt-3 bg-white/10 rounded-xl px-4 py-2 inline-flex items-center gap-2">
-                                <span className="text-xs text-campus-200">Your Code:</span>
+                                <span className="text-xs text-zayko-200">Your Code:</span>
                                 <span className="font-display font-bold text-white tracking-widest">{profile.uniqueCode}</span>
                             </div>
                         )}
@@ -198,7 +198,7 @@ export default function WalletPage() {
 
                 {/* Top-up Selection */}
                 <div className="glass-card p-6 mb-8 animate-slide-up">
-                    <h3 className="font-display font-bold text-campus-700 mb-4">💳 Add Money to Wallet</h3>
+                    <h3 className="font-display font-bold text-zayko-700 mb-4">💳 Add Money to Wallet</h3>
 
                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
                         {[50, 100, 200, 500].map((amt) => (
@@ -206,7 +206,7 @@ export default function WalletPage() {
                                 key={amt}
                                 onClick={() => handleTopUp(amt)}
                                 disabled={processing}
-                                className="py-3 px-4 rounded-2xl border-2 border-campus-100 text-campus-600 font-bold hover:bg-campus-50 hover:border-campus-200 transition-all active:scale-95 disabled:opacity-50"
+                                className="py-3 px-4 rounded-2xl border-2 border-zayko-100 text-zayko-600 font-bold hover:bg-zayko-50 hover:border-zayko-200 transition-all active:scale-95 disabled:opacity-50"
                             >
                                 +₹{amt}
                             </button>
@@ -248,7 +248,7 @@ export default function WalletPage() {
 
                 {/* Transfer Money */}
                 <div className="glass-card p-6 mb-8 animate-slide-up">
-                    <h3 className="font-display font-bold text-campus-700 mb-4">💸 Transfer Money</h3>
+                    <h3 className="font-display font-bold text-zayko-700 mb-4">💸 Transfer Money</h3>
                     <p className="text-xs text-gray-500 mb-4">Send money to another student using their unique code</p>
 
                     <div className="space-y-4">
@@ -356,7 +356,7 @@ export default function WalletPage() {
                         >
                             {transferring ? (
                                 <>
-                                    <div className="w-5 h-5 border-2 border-campus-800 border-t-transparent rounded-full animate-spin"></div>
+                                    <div className="w-5 h-5 border-2 border-zayko-800 border-t-transparent rounded-full animate-spin"></div>
                                     Sending...
                                 </>
                             ) : (
@@ -369,7 +369,7 @@ export default function WalletPage() {
                 {/* Transaction History — Now REAL-TIME via onSnapshot */}
                 <div className="animate-slide-up">
                     <div className="flex items-center justify-between mb-4">
-                        <h3 className="font-display font-bold text-lg text-campus-700">📊 Transaction History</h3>
+                        <h3 className="font-display font-bold text-lg text-zayko-700">📊 Transaction History</h3>
                         <span className="text-xs text-emerald-600 font-medium flex items-center gap-1">
                             <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></span>
                             Live
@@ -395,7 +395,7 @@ export default function WalletPage() {
                                             {txn.type === "topup" || txn.type === "credit" ? "💳" : txn.type === "refund" ? "🔄" : txn.type === "transfer" ? "💸" : "🍱"}
                                         </div>
                                         <div>
-                                            <p className="font-bold text-sm text-campus-800">{txn.description}</p>
+                                            <p className="font-bold text-sm text-zayko-800">{txn.description}</p>
                                             <p className="text-[10px] text-gray-400 font-medium">
                                                 {new Date(txn.createdAt).toLocaleString(undefined, {
                                                     dateStyle: 'medium',
@@ -406,7 +406,7 @@ export default function WalletPage() {
                                     </div>
                                     <div className="text-right">
                                         <p className={`font-display font-bold text-lg ${(txn.type === "topup" || txn.type === "credit" || txn.type === "refund" || (txn.type === "transfer" && txn.toUserId === user?.uid))
-                                            ? "text-emerald-600" : "text-campus-800"
+                                            ? "text-emerald-600" : "text-zayko-800"
                                             }`}>
                                             {(txn.type === "topup" || txn.type === "credit" || txn.type === "refund" || (txn.type === "transfer" && txn.toUserId === user?.uid)) ? "+" : "-"}₹{txn.amount}
                                         </p>

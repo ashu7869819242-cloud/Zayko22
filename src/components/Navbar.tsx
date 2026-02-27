@@ -29,11 +29,11 @@ export default function Navbar() {
                     {/* Logo */}
                     <Link href="/" className="flex items-center gap-2 group">
                         <div className="w-10 h-10 rounded-xl gradient-primary flex items-center justify-center text-white font-bold text-lg group-hover:scale-110 transition-transform">
-                            🎓
+                            ⚡
                         </div>
                         <div className="hidden sm:block">
-                            <h1 className="text-lg font-display font-bold text-campus-500">Campus Canteen</h1>
-                            <p className="text-xs text-gray-400 -mt-1">Smart Ordering System</p>
+                            <h1 className="text-lg font-display font-bold text-zayko-500">Zayko</h1>
+                            <p className="text-xs text-gray-400 -mt-1">Order Smart. Eat Fresh.</p>
                         </div>
                     </Link>
 
@@ -45,8 +45,8 @@ export default function Navbar() {
                                     key={link.href}
                                     href={link.href}
                                     className={`relative flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all duration-200 ${pathname === link.href
-                                        ? "bg-campus-500 text-white shadow-glow"
-                                        : "text-gray-600 hover:bg-campus-50 hover:text-campus-600"
+                                        ? "bg-zayko-500 text-white shadow-glow"
+                                        : "text-gray-600 hover:bg-zayko-50 hover:text-zayko-600"
                                         }`}
                                 >
                                     <span>{link.icon}</span>
@@ -66,7 +66,7 @@ export default function Navbar() {
                         {user && profile && (
                             <div className="hidden sm:flex items-center gap-3">
                                 <div className="text-right">
-                                    <p className="text-sm font-semibold text-campus-600">{profile.name}</p>
+                                    <p className="text-sm font-semibold text-zayko-600">{profile.name}</p>
                                     <p className="text-xs text-gray-400">{profile.rollNumber}</p>
                                 </div>
                                 <button
@@ -106,8 +106,8 @@ export default function Navbar() {
                                     href={link.href}
                                     onClick={() => setMobileOpen(false)}
                                     className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all ${pathname === link.href
-                                        ? "bg-campus-500 text-white"
-                                        : "text-gray-600 hover:bg-campus-50"
+                                        ? "bg-zayko-500 text-white"
+                                        : "text-gray-600 hover:bg-zayko-50"
                                         }`}
                                 >
                                     <span className="text-lg">{link.icon}</span>

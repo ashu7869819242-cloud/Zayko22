@@ -36,7 +36,7 @@ export default function MenuCard({ id, name, price, category, available, quantit
     return (
         <div className={`menu-card glass-card overflow-hidden ${!available ? "opacity-60" : ""}`}>
             {/* Image Section */}
-            <div className="relative h-40 sm:h-48 bg-gradient-to-br from-campus-100 to-teal-50 flex items-center justify-center overflow-hidden">
+            <div className="relative h-40 sm:h-48 bg-gradient-to-br from-zayko-100 to-teal-50 flex items-center justify-center overflow-hidden">
                 {image ? (
                     <img src={image} alt={name} className="w-full h-full object-cover" />
                 ) : (
@@ -45,7 +45,7 @@ export default function MenuCard({ id, name, price, category, available, quantit
                     </div>
                 )}
                 {/* Category Badge */}
-                <span className="absolute top-3 left-3 badge bg-campus-500/90 text-white capitalize text-xs">
+                <span className="absolute top-3 left-3 badge bg-zayko-500/90 text-white capitalize text-xs">
                     {category}
                 </span>
                 {/* Availability */}
@@ -61,7 +61,7 @@ export default function MenuCard({ id, name, price, category, available, quantit
             {/* Content */}
             <div className="p-4">
                 <div className="flex items-start justify-between gap-2 mb-2">
-                    <h3 className="font-display font-semibold text-lg text-campus-700 line-clamp-1">{name}</h3>
+                    <h3 className="font-display font-semibold text-lg text-zayko-700 line-clamp-1">{name}</h3>
                     <span className="text-lg font-bold text-teal-600 whitespace-nowrap">₹{price}</span>
                 </div>
 
@@ -77,7 +77,7 @@ export default function MenuCard({ id, name, price, category, available, quantit
                                     {quantity <= 5 ? `⚠️ Only ${quantity} left!` : `✓ ${quantity} left`}
                                 </span>
                                 {preparationTime && preparationTime > 0 && (
-                                    <span className="badge bg-campus-50 text-campus-600">
+                                    <span className="badge bg-zayko-50 text-zayko-600">
                                         ⏱ ~{preparationTime} min
                                     </span>
                                 )}
@@ -91,7 +91,7 @@ export default function MenuCard({ id, name, price, category, available, quantit
                         onClick={handleAdd}
                         disabled={!available || quantity <= 0}
                         className={`flex items-center gap-1 px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-200 ${available && quantity > 0
-                            ? "bg-campus-500 text-white hover:bg-campus-600 hover:scale-105 active:scale-95"
+                            ? "bg-zayko-500 text-white hover:bg-zayko-600 hover:scale-105 active:scale-95"
                             : "bg-gray-200 text-gray-400 cursor-not-allowed"
                             }`}
                     >

@@ -10,6 +10,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { adminDb } from "@/lib/firebase-admin";
 import { verifyAdmin } from "@/lib/admin-auth";
 import { FieldValue } from "firebase-admin/firestore";
+import { updateCanteenWallet } from "@/lib/canteen-wallet";
 
 export const runtime = "nodejs";
 
@@ -50,16 +51,16 @@ export async function PATCH(req: NextRequest) {
 
         const orderRef = adminDb.collection("orders").doc(orderId);
 
-        // Handle cancellation with refund
-        if (status === "cancelled") {
-            await adminDb.runTransaction(async (transaction) => {
-                const orderDoc = await transaction.get(orderRef);
-                if (!orderDoc.exists) throw new Error("Order not found");
+        await adminDb.runTransaction(async (transaction) => {
+            const orderDoc = await transaction.get(orderRef);
+            if (!orderDoc.exists) throw new Error("Order not found");
 
-                const orderData = orderDoc.data()!;
+            const orderData = orderDoc.data()!;
+            const oldStatus = orderData.status;
 
-                // Prevent double-refund
-                if (orderData.status === "cancelled") {
+            // --- 1. HANDLE CANCELLATION & REFUND ---
+            if (status === "cancelled") {
+                if (oldStatus === "cancelled") {
                     throw new Error("Order is already cancelled");
                 }
 
@@ -67,19 +68,22 @@ export async function PATCH(req: NextRequest) {
                 const total = orderData.total;
                 const orderIdDisplay = orderData.orderId;
 
-                // 1. Update order status
+                // Sync Wallet (deduct pending/total if cancelling an active/completed order)
+                await updateCanteenWallet(transaction, oldStatus, "cancelled", total, orderIdDisplay);
+
+                // Update order
                 transaction.update(orderRef, {
                     status: "cancelled",
                     updatedAt: new Date().toISOString(),
                 });
 
-                // 2. Refund wallet balance
+                // Refund User Wallet
                 const userRef = adminDb.collection("users").doc(userId);
                 transaction.update(userRef, {
                     walletBalance: FieldValue.increment(total),
                 });
 
-                // 3. Record refund transaction
+                // Record Refund Txn for User
                 const txnRef = adminDb.collection("walletTransactions").doc();
                 transaction.set(txnRef, {
                     userId,
@@ -89,43 +93,52 @@ export async function PATCH(req: NextRequest) {
                     transactionId: txnRef.id,
                     createdAt: new Date().toISOString(),
                 });
-            });
 
-            return NextResponse.json({ success: true, refunded: true });
-        }
+                return; // End transaction for cancellation block
+            }
 
-        // Normal status/prepTime update (non-cancel)
-        const updateData: Record<string, unknown> = {
-            updatedAt: new Date().toISOString(),
-        };
-        if (status) updateData.status = status;
+            // --- 2. NORMAL STATUS / PREP TIME UPDATE ---
+            const updateData: Record<string, unknown> = {
+                updatedAt: new Date().toISOString(),
+            };
 
-        // When status is set to "ready", clear the countdown targets
-        if (status === "ready") {
-            updateData.readyAt = null;
-            updateData.estimatedReadyAt = null;
-        }
+            let newStatus = status || oldStatus;
 
-        if (prepTime) {
-            updateData.prepTime = prepTime;
-            const readyAtISO = new Date(
-                Date.now() + prepTime * 60 * 1000
-            ).toISOString();
-            updateData.estimatedReadyAt = readyAtISO;
-            updateData.readyAt = readyAtISO;
+            // When status is set to "ready", clear countdowns
+            if (newStatus === "ready") {
+                updateData.readyAt = null;
+                updateData.estimatedReadyAt = null;
+            }
 
-            // Auto-promote to "confirmed" if order is still pending and no explicit status was sent
-            if (!status) {
-                const currentDoc = await adminDb.collection("orders").doc(orderId).get();
-                const currentStatus = currentDoc.data()?.status;
-                if (currentStatus === "pending") {
-                    updateData.status = "confirmed";
+            if (prepTime) {
+                updateData.prepTime = prepTime;
+                const readyAtISO = new Date(Date.now() + prepTime * 60 * 1000).toISOString();
+                updateData.estimatedReadyAt = readyAtISO;
+                updateData.readyAt = readyAtISO;
+
+                // Auto-promote to confirmed if pending and no explicit status sent
+                if (!status && oldStatus === "pending") {
+                    newStatus = "confirmed";
                 }
             }
-        }
 
-        await orderRef.update(updateData);
-        return NextResponse.json({ success: true });
+            if (newStatus !== oldStatus) {
+                updateData.status = newStatus;
+
+                // Sync Wallet for status progression
+                await updateCanteenWallet(
+                    transaction,
+                    oldStatus,
+                    newStatus,
+                    orderData.total,
+                    orderData.orderId
+                );
+            }
+
+            transaction.update(orderRef, updateData);
+        });
+
+        return NextResponse.json({ success: true, refunded: status === "cancelled" });
     } catch (error) {
         console.error("Failed to update order:", error);
         const message = error instanceof Error ? error.message : "Failed to update order";
